@@ -2,13 +2,12 @@
 
 {% block list %}
 {% set itinerary = load_data(path="static/itineraries/paris/3day.json", format="json") %}
-{% set siteinfo = load_data(path="static/sites/paris.json", format="json") %}
 
 {% for day in itinerary['schedule'] %}
-  {% if loop.index0 != 0 %}
-    <div class="list" style="display: none;">
-  {% else %}
+  {% if loop.index0 == 0 %}
     <div class="list">
+  {% else %}
+    <div class="list" style="display: none;">
   {% endif %}
     {% for sites in day %}
       <div class="listItem" draggable="true">
