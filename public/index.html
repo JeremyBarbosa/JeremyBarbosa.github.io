@@ -4,14 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>JHJ TRVLPLNNR</title>
-  <script src="Sortable.min.js"></script>
   <style>
-  body {
-    margin: 0.5rem;
-    /* TODO We can pick a prettier font */
-    font: 1.25rem/1.5 sans-serif;
-    text-rendering: optimizeSpeed;
-    background: #22559C;
+    body {
+      margin: 0.5rem;
+      /* TODO We can pick a prettier font */
+      font: 1.25rem/1.5 sans-serif;
+      text-rendering: optimizeSpeed;
+      background: #FFEADD;
   }
   .handle {
     cursor: move;
@@ -24,11 +23,12 @@
   .listItem {
     /* TODO The background being a photo of the attraction is also possible,
     but care should be taken to make sure the text is still legible */
-    background: #F27370;
+    background: #FCAEAE;
     border-radius: 0.5rem;
-    border: solid #FA9856;
+    border: solid #FF8989;
     padding: 0.5rem;
-    overflow:hidden;
+    /* TODO Make height proportional to lengh, shrink and grow as needed */
+    overflow: hidden;
     min-height: 3rem;
   }
   .listItem > *, h4 {
@@ -44,47 +44,65 @@
   }
   input[type=time] {
     border: none;
-    background: #FA9856;
-    border-radius: 0.5rem;
+    background: #FF8989;
+    border-radius: 0.2rem;
     padding: 0;
+  }
+  #daypicker {
+    background-color: #333;
+    overflow: auto;
+    white-space: nowrap;
+  }
+  #daypicker a {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+  }
+  #daypicker a:hover {
+    background-color: #777;
   }
   </style>
 </head>
 <body>
   <header>
-    <h1 style="font-size: 10vw; color: #F27370; text-align: center; margin: 0;">Travel Planner</h1>
-    <!-- <hr style="margin: 0;"> -->
+    <h1 style="font-size: 10vw; color: #FF6666; text-align: center; margin: 0;">Travel Planner</h1>
   </header>
-  <div class="list">
-    <div class="listItem">
-      <div class="head">
-        <h4>Eiffel Tower</h4>
-        <h4 class="handle">&#x21f5;</h4>
-      </div>
-      <input type="time" value="9:00" onchange="handler(event);">
-      &mdash;
-      <input id="later" type="time" value="12:00">
-      <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
-    </div>
-    <div class="listItem">
-      <span class="handle">&#x21f5;</span>
-    </div>
-    <div class="listItem">
-      <span class="handle">&#x21f5;</span>
-    </div>
+  <div id="daypicker">
+    <!-- TODO Swap dates when clicking and dragging! -->
+    <a onclick="menu(event, 0)" ondragenter="menu(event, 0)">07/13/23</a>
+    <a onclick="menu(event, 1)" ondragenter="menu(event, 1)">07/14/23</a>
+    <a onclick="menu(event, 2)" ondragenter="menu(event, 2)">07/15/23</a>
   </div>
-  <script>    
-    Sortable.create(document.getElementsByClassName('list')[0], {
-      handle: '.handle',
-      animation: 150
-    });
-    const timeControl = document.getElementById('later');
-    function handler(e){
-      console.log('Firing!')
-      timeControl.value = e.target.value
+  
+  
+  <script src="Sortable.min.js"></script>
+  <script>
+    const lists = document.getElementsByClassName('list');
+    // THIS MUST REMAIN "OF"
+    for (const list of lists) {
+      Sortable.create(list, {
+        group: 'list',
+        handle: '.handle',
+        animation: 150,
+      });
     }
+    function menu(e, listNum){
+      console.log('Firing!')
+      for (const list of lists) {
+        list.style.display = 'none'
+      }
+      lists[listNum].style.display = 'flex';
+    }
+    // const timeControl = document.getElementById('later');
+    // function handler(e){
+    //   console.log('Firing!')
+    //   timeControl.value = e.target.value
+    // }
     // TODO Add check for duration being > 0
     // TODO Somehow swap times when swapping attractions?
-  </script>
+    // TODO Consider travel times to and from the hotel
+    </script>
 </body>
 </html>

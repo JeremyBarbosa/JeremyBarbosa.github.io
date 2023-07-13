@@ -1,0 +1,31 @@
+{% extends "index.html" %}
+
+{% block list %}
+{% set itinerary = load_data(path="static/itineraries/paris/3day.json", format="json") %}
+{% set siteinfo = load_data(path="static/sites/paris.json", format="json") %}
+
+{% for day in itinerary['schedule'] %}
+  {% if loop.index0 != 0 %}
+    <div class="list" style="display: none;">
+  {% else %}
+    <div class="list">
+  {% endif %}
+    {% for sites in day %}
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>{{ sites[1] }}</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="{{ sites[0] }}" onchange="handler(event);">
+        &mdash;
+        {% if day[loop.index] %}
+          <input type="time" value="{{ day[loop.index][0] }}">
+        {% else %}
+          <input type="time" value="22:00">
+        {% endif %}
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    {% endfor %}  
+  </div>
+{% endfor %}
+{% endblock list %}

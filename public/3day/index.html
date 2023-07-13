@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>JHJ TRVLPLNNR</title>
+  <style>
+    body {
+      margin: 0.5rem;
+      /* TODO We can pick a prettier font */
+      font: 1.25rem/1.5 sans-serif;
+      text-rendering: optimizeSpeed;
+      background: #FFEADD;
+  }
+  .handle {
+    cursor: move;
+  }
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .listItem {
+    /* TODO The background being a photo of the attraction is also possible,
+    but care should be taken to make sure the text is still legible */
+    background: #FCAEAE;
+    border-radius: 0.5rem;
+    border: solid #FF8989;
+    padding: 0.5rem;
+    /* TODO Make height proportional to lengh, shrink and grow as needed */
+    overflow: hidden;
+    min-height: 3rem;
+  }
+  .listItem > *, h4 {
+    margin: 0;
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  p {
+    font-size: 1rem;
+  }
+  input[type=time] {
+    border: none;
+    background: #FF8989;
+    border-radius: 0.2rem;
+    padding: 0;
+  }
+  #daypicker {
+    background-color: #333;
+    overflow: auto;
+    white-space: nowrap;
+  }
+  #daypicker a {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+  }
+  #daypicker a:hover {
+    background-color: #777;
+  }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 style="font-size: 10vw; color: #FF6666; text-align: center; margin: 0;">Travel Planner</h1>
+  </header>
+  <div id="daypicker">
+    <!-- TODO Swap dates when clicking and dragging! -->
+    <a onclick="menu(event, 0)" ondragenter="menu(event, 0)">07/13/23</a>
+    <a onclick="menu(event, 1)" ondragenter="menu(event, 1)">07/14/23</a>
+    <a onclick="menu(event, 2)" ondragenter="menu(event, 2)">07/15/23</a>
+  </div>
+  
+
+
+
+
+  
+    <div class="list">
+  
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Louvre Museum</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="09:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="11:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Notre-Dame Cathedral</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="11:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="13:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Lunch</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="13:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="14:30">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Sainte-Chapelle</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="14:30" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="16:30">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Centre Pompidou</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="16:30" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="18:30">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Île Saint-Louis</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="18:30" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="20:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Dinner</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="20:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="22:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+      
+  </div>
+
+  
+    <div class="list" style="display: none;">
+  
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Eiffel Tower</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="09:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="11:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Trocadéro Gardens, Palais de Chaillot</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="11:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="13:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Lunch</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="13:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="14:30">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Arc de Triomphe, Champs-Élysées</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="14:30" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="16:30">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Grand Palais, Petit Palais</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="16:30" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="18:30">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Parc Monceau</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="18:30" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="20:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Dinner</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="20:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="22:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+      
+  </div>
+
+  
+    <div class="list" style="display: none;">
+  
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Palace of Versailles</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="09:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="11:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Hall of Mirrors</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="11:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="13:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Lunch</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="13:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="14:30">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Gardens of Versailles</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="14:30" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="16:30">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Grand Trianon, Petit Trianon</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="16:30" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="18:30">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Marie Antoinette&#x27;s Estate</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="18:30" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="20:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+    
+      <div class="listItem" draggable="true">
+        <div class="head">
+          <h4>Dinner</h4>
+          <h4 class="handle">&#x21f5;</h4>
+        </div>
+        <input type="time" value="20:00" onchange="handler(event);">
+        &mdash;
+        
+          <input type="time" value="22:00">
+        
+        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+      </div>
+      
+  </div>
+
+
+  <script src="Sortable.min.js"></script>
+  <script>
+    const lists = document.getElementsByClassName('list');
+    // THIS MUST REMAIN "OF"
+    for (const list of lists) {
+      Sortable.create(list, {
+        group: 'list',
+        handle: '.handle',
+        animation: 150,
+      });
+    }
+    function menu(e, listNum){
+      console.log('Firing!')
+      for (const list of lists) {
+        list.style.display = 'none'
+      }
+      lists[listNum].style.display = 'flex';
+    }
+    // const timeControl = document.getElementById('later');
+    // function handler(e){
+    //   console.log('Firing!')
+    //   timeControl.value = e.target.value
+    // }
+    // TODO Add check for duration being > 0
+    // TODO Somehow swap times when swapping attractions?
+    // TODO Consider travel times to and from the hotel
+    </script>
+</body>
+</html>
