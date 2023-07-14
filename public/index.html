@@ -14,6 +14,8 @@
   }
   .handle {
     cursor: move;
+    float: right;
+    font-size: 2rem;
   }
   .list {
     display: flex;
@@ -37,7 +39,7 @@
   .head {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
   }
   p {
     font-size: 1rem;
@@ -45,16 +47,23 @@
   input[type=time] {
     border: none;
     background: #FF8989;
+    color: white;
     border-radius: 0.2rem;
     padding: 0;
   }
   #daypicker {
-    background-color: #333;
+    /* Do I need to remove the display flex if we have more days? */
+    display: flex;
+    justify-content: space-between;
+    background-color: #FF8989;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
     overflow: auto;
     white-space: nowrap;
   }
   #daypicker a {
     display: inline-block;
+    cursor: pointer;
     color: white;
     text-align: center;
     padding: 14px;
@@ -63,18 +72,15 @@
   #daypicker a:hover {
     background-color: #777;
   }
+  h4 {
+    line-height: normal;
+  }
   </style>
 </head>
 <body>
   <header>
     <h1 style="font-size: 10vw; color: #FF6666; text-align: center; margin: 0;">Travel Planner</h1>
   </header>
-  <div id="daypicker">
-    <!-- TODO Swap dates when clicking and dragging! -->
-    <a onclick="menu(event, 0)" ondragenter="menu(event, 0)">07/13/23</a>
-    <a onclick="menu(event, 1)" ondragenter="menu(event, 1)">07/14/23</a>
-    <a onclick="menu(event, 2)" ondragenter="menu(event, 2)">07/15/23</a>
-  </div>
   
   
   <script src="/Sortable.min.js"></script>
@@ -88,18 +94,36 @@
         animation: 150,
       });
     }
-    function menu(e, listNum){
-      console.log('Firing!')
-      for (const list of lists) {
-        list.style.display = 'none'
-      }
-      lists[listNum].style.display = 'flex';
+
+    const menuItems = document.getElementsByTagName('a');
+    // THIS MUST REMAIN "OF"
+    for (const menu of menuItems) {
+      menu.addEventListener("dragenter", (event) => {
+        for (const list of lists) {
+          list.style.display = 'none'
+        }
+        console.log(event.target.dataset.day)
+        lists[event.target.dataset.day-1].style.display = 'flex';
+      });
+
+      menu.addEventListener("click", (event) => {
+        for (const list of lists) {
+          list.style.display = 'none'
+        }
+        console.log(event.target.dataset.day)
+        lists[event.target.dataset.day-1].style.display = 'flex';
+      });
     }
-    // const timeControl = document.getElementById('later');
-    // function handler(e){
+
+
+    // function menu(e, listNum){
     //   console.log('Firing!')
-    //   timeControl.value = e.target.value
+    //   for (const list of lists) {
+    //     list.style.display = 'none'
+    //   }
+    //   lists[listNum].style.display = 'flex';
     // }
+    
     // TODO Add check for duration being > 0
     // TODO Somehow swap times when swapping attractions?
     // TODO Consider travel times to and from the hotel

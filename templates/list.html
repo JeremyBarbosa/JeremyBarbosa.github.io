@@ -3,16 +3,24 @@
 {% block list %}
 {% set itinerary = load_data(path="static/itineraries/paris/3day.json", format="json") %}
 
+<div id="daypicker">
+  {% for day in itinerary['schedule'] %}
+  <a data-day="{{loop.index}}">Day {{loop.index}}</a>
+  {% endfor %}
+</div>
+
 {% for day in itinerary['schedule'] %}
-  {% if loop.index0 == 0 %}
-    <div class="list">
+  {% set currentDay = loop.index %}
+  {% if currentDay == 1 %}
+    <div data-day="{{currentDay}}" class="list">
   {% else %}
-    <div class="list" style="display: none;">
+    <div data-day="{{currentDay}}" class="list" style="display: none;">
   {% endif %}
     {% for sites in day %}
-      <div class="listItem" draggable="true">
+      <div data-day="{{currentDay}}" class="listItem" draggable="true">
         <div class="head">
           <h4>{{ sites[1] }}</h4>
+          <!-- TODO Make handle larger -->
           <h4 class="handle">&#x21f5;</h4>
         </div>
         <input type="time" value="{{ sites[0] }}" onchange="handler(event);">
