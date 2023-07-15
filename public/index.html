@@ -11,70 +11,70 @@
       font: 1.25rem/1.5 sans-serif;
       text-rendering: optimizeSpeed;
       background: #FFEADD;
-  }
-  .handle {
-    cursor: move;
-    float: right;
-    font-size: 2rem;
-  }
-  .list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .listItem {
-    /* TODO The background being a photo of the attraction is also possible,
-    but care should be taken to make sure the text is still legible */
-    background: #FCAEAE;
-    border-radius: 0.5rem;
-    border: solid #FF8989;
-    padding: 0.5rem;
-    /* TODO Make height proportional to lengh, shrink and grow as needed */
-    overflow: hidden;
-    min-height: 3rem;
-  }
-  .listItem > *, h4 {
-    margin: 0;
-  }
-  .head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  p {
-    font-size: 1rem;
-  }
-  input[type=time] {
-    border: none;
-    background: #FF8989;
-    color: white;
-    border-radius: 0.2rem;
-    padding: 0;
-  }
-  #daypicker {
-    /* Do I need to remove the display flex if we have more days? */
-    display: flex;
-    justify-content: space-between;
-    background-color: #FF8989;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-    overflow: auto;
-    white-space: nowrap;
-  }
-  #daypicker a {
-    display: inline-block;
-    cursor: pointer;
-    color: white;
-    text-align: center;
-    padding: 14px;
-    text-decoration: none;
-  }
-  #daypicker a:hover {
-    background-color: #777;
-  }
-  h4 {
-    line-height: normal;
-  }
+    }
+    .handle {
+      cursor: move;
+      float: right;
+      font-size: 2rem;
+    }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .listItem {
+      /* TODO The background being a photo of the attraction is also possible,
+      but care should be taken to make sure the text is still legible */
+      background: #FCAEAE;
+      border-radius: 0.5rem;
+      border: solid #FF8989;
+      padding: 0.5rem;
+      /* TODO Make height proportional to lengh, shrink and grow as needed */
+      overflow: hidden;
+      min-height: 3rem;
+    }
+    .listItem > *, h4 {
+      margin: 0;
+    }
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    p {
+      font-size: 1rem;
+    }
+    input[type=time] {
+      border: none;
+      background: #FF8989;
+      color: white;
+      border-radius: 0.2rem;
+      padding: 0;
+    }
+    #daypicker {
+      /* Do I need to remove the display flex if we have more days? */
+      display: flex;
+      justify-content: space-between;
+      background-color: #FF8989;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      overflow: auto;
+      white-space: nowrap;
+    }
+    #daypicker a {
+      display: inline-block;
+      cursor: pointer;
+      color: white;
+      text-align: center;
+      padding: 14px;
+      text-decoration: none;
+    }
+    #daypicker a:hover {
+      background-color: #777;
+    }
+    h4 {
+      line-height: normal;
+    }
   </style>
 </head>
 <body>
@@ -85,6 +85,9 @@
   
   <script src="/Sortable.min.js"></script>
   <script>
+    // let state = fetch("/itineraries/paris/3day.json")
+    // .then(res => res.json())
+
     const lists = document.getElementsByClassName('list');
     // THIS MUST REMAIN "OF"
     for (const list of lists) {
@@ -93,7 +96,7 @@
         handle: '.handle',
         animation: 150,
       });
-    }
+    };
 
     const menuItems = document.getElementsByTagName('a');
     // THIS MUST REMAIN "OF"
@@ -102,31 +105,93 @@
         for (const list of lists) {
           list.style.display = 'none'
         }
-        console.log(event.target.dataset.day)
-        lists[event.target.dataset.day-1].style.display = 'flex';
+        lists[event.target.dataset.day].style.display = 'flex';
       });
 
       menu.addEventListener("click", (event) => {
         for (const list of lists) {
           list.style.display = 'none'
         }
-        console.log(event.target.dataset.day)
-        lists[event.target.dataset.day-1].style.display = 'flex';
+        lists[event.target.dataset.day].style.display = 'flex';
       });
     }
 
+    const times = document.querySelectorAll("input[type=time]");
+    // THIS MUST REMAIN "OF"
+    for (const time of times) {
+      time.addEventListener("change", (event) => {
 
-    // function menu(e, listNum){
-    //   console.log('Firing!')
-    //   for (const list of lists) {
-    //     list.style.display = 'none'
-    //   }
-    //   lists[listNum].style.display = 'flex';
-    // }
-    
-    // TODO Add check for duration being > 0
-    // TODO Somehow swap times when swapping attractions?
-    // TODO Consider travel times to and from the hotel
+        // Get the node for our listItem head. This contains the name of the site
+        // and will help identify which node we are later
+        let ourListItemHead = event.target.parentElement.children[0]
+        
+        // time input -> listItem -> list -> all listItems of list (ordered)
+        let siblingListItems = event.target.parentElement.parentElement.children
+
+        // Search through all our sibling nodes to find our current index
+        // in the siblingListItems array
+        let currentIndex = 0
+        let ourIndex
+        for (const listItem of siblingListItems) {
+          if (listItem.children[0].isEqualNode(ourListItemHead)) {
+            ourIndex = currentIndex
+          }
+          currentIndex++
+        }
+
+        // Change the time of the closest sibling depending on if the user
+        // changes the beginning or ending time
+        if (event.target.className == "begin") {
+          if (siblingListItems[ourIndex-1]) {
+            siblingListItems[ourIndex-1].children[2].value = event.target.value
+          }
+        } else {
+          if (siblingListItems[ourIndex+1]) {
+            siblingListItems[ourIndex+1].children[1].value = event.target.value
+          }
+        }
+
+
+        // console.log(event.target.parentElement)
+        // console.log(event.target.value, parseInt(event.target.value.replace(/:/, "")))
+        // console.log(parseInt(event.target.parentElement.children[2].value.split(":")))
+
+        // Check that the duration of any event is positive
+        if (event.target.className == "begin") {
+          if (parseInt(event.target.value.replace(/:/, "")) > parseInt(event.target.parentElement.children[2].value.replace(/:/, ""))) {
+            event.target.parentElement.style.background = "#686868"
+          } else {
+            event.target.parentElement.style.background = "#FCAEAE"
+          }
+        } else {
+          if (parseInt(event.target.value.replace(/:/, "")) < parseInt(event.target.parentElement.children[1].value.replace(/:/, ""))) {
+            event.target.parentElement.style.background = "#686868"
+          } else {
+            event.target.parentElement.style.background = "#FCAEAE"
+          }
+        }
+
+      });
+    }
+
+    // TODO
+    // Allow deleting sites (switch to free time?)
+    // On pickup, replace the original spot with a 'Free Time'
+      // Actually you may want to create the free time when you drop the item
+      // This way there are not a billion dupes
+    // On drop, choose between 3 options:
+      // Don't change times, shift earlier sites by duration, shift later sites by duration
+
+    // TODO
+    // Somehow swap times when swapping attractions?
+    // Consider travel times to and from the hotel
+    // We are adding a lot of event handlers. Should we parse the tree once
+      // and have a switch statement for each element?
+    // Store state in URL
+
+    // KNOWN BUGS
+    // Can't drag to different days on iOS
+    // We don't account for events that split between multiple days (e.g. 11pm-1am)
     </script>
 </body>
 </html>

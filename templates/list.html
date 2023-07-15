@@ -5,7 +5,8 @@
 
 <div id="daypicker">
   {% for day in itinerary['schedule'] %}
-  <a data-day="{{loop.index}}">Day {{loop.index}}</a>
+  <!-- Try other elements, or perhaps sizing this better to get onDragEnter to work -->
+  <a data-day="{{loop.index0}}">Day {{loop.index}}</a>
   {% endfor %}
 </div>
 
@@ -17,18 +18,18 @@
     <div data-day="{{currentDay}}" class="list" style="display: none;">
   {% endif %}
     {% for sites in day %}
-      <div data-day="{{currentDay}}" class="listItem" draggable="true">
+      <!-- Don't put any state into listItem as they move around -->
+      <div class="listItem" draggable="true">
         <div class="head">
           <h4>{{ sites[1] }}</h4>
-          <!-- TODO Make handle larger -->
           <h4 class="handle">&#x21f5;</h4>
         </div>
-        <input type="time" value="{{ sites[0] }}" onchange="handler(event);">
+        <input type="time" class="begin" value="{{ sites[0] }}">
         &mdash;
         {% if day[loop.index] %}
-          <input type="time" value="{{ day[loop.index][0] }}">
+          <input type="time" class="end" value="{{ day[loop.index][0] }}">
         {% else %}
-          <input type="time" value="22:00">
+          <input type="time" class="end" value="22:00">
         {% endif %}
         <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
       </div>
