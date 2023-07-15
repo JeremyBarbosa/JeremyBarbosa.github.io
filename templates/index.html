@@ -12,11 +12,6 @@
       text-rendering: optimizeSpeed;
       background: #FFEADD;
     }
-    .handle {
-      cursor: move;
-      float: right;
-      font-size: 2rem;
-    }
     .list {
       display: flex;
       flex-direction: column;
@@ -30,8 +25,10 @@
       border: solid #FF8989;
       padding: 0.5rem;
       /* TODO Make height proportional to lengh, shrink and grow as needed */
+      /* Probs sizing per 30min, floored */
       overflow: hidden;
       min-height: 3rem;
+      /* cursor: move; */
     }
     .listItem > *, h4 {
       margin: 0;
@@ -72,8 +69,11 @@
     #daypicker a:hover {
       background-color: #777;
     }
-    h4 {
+    h4, span {
       line-height: normal;
+    }
+    .close {
+      cursor: pointer;
     }
   </style>
 </head>
@@ -88,12 +88,21 @@
     // let state = fetch("/itineraries/paris/3day.json")
     // .then(res => res.json())
 
+    // We search for a lot of nodes, so do that all here in one go
+    // document.querySelectorAll("input[type=time]");
+
     const lists = document.getElementsByClassName('list');
     // THIS MUST REMAIN "OF"
     for (const list of lists) {
       Sortable.create(list, {
         group: 'list',
-        handle: '.handle',
+        delay: 400,
+        // We really only need delay on mobile to allow dragging
+        // and this works around a bug that prevents delays on Edge
+        delayOnTouchOnly: true,
+        // Needed for delay on some sensitive touch screens
+        touchStartThreshold: 3,
+        // handle: '.handle',
         animation: 150,
       });
     };
@@ -151,11 +160,6 @@
           }
         }
 
-
-        // console.log(event.target.parentElement)
-        // console.log(event.target.value, parseInt(event.target.value.replace(/:/, "")))
-        // console.log(parseInt(event.target.parentElement.children[2].value.split(":")))
-
         // Check that the duration of any event is positive
         if (event.target.className == "begin") {
           if (parseInt(event.target.value.replace(/:/, "")) > parseInt(event.target.parentElement.children[2].value.replace(/:/, ""))) {
@@ -174,8 +178,16 @@
       });
     }
 
+    const closes = document.getElementsByClassName('close');
+    // THIS MUST REMAIN "OF"
+    for (const close of closes) {
+      close.addEventListener("click", (event) => {
+        event.target.parentElement.children[0].innerHTML = "Free Time"
+        event.target.parentElement.parentElement.children[3].innerHTML = "Do whatever you want"
+      });
+    }
+
     // TODO
-    // Allow deleting sites (switch to free time?)
     // On pickup, replace the original spot with a 'Free Time'
       // Actually you may want to create the free time when you drop the item
       // This way there are not a billion dupes
@@ -183,15 +195,14 @@
       // Don't change times, shift earlier sites by duration, shift later sites by duration
 
     // TODO
-    // Somehow swap times when swapping attractions?
     // Consider travel times to and from the hotel
-    // We are adding a lot of event handlers. Should we parse the tree once
-      // and have a switch statement for each element?
     // Store state in URL
 
     // KNOWN BUGS
     // Can't drag to different days on iOS
     // We don't account for events that split between multiple days (e.g. 11pm-1am)
+      // Well we could just handle them on the day they start. That is totally fine
+      // But we have some calculations currently assuming all times are on the same day
     </script>
 </body>
 </html>
