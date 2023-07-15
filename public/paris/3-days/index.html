@@ -51,10 +51,11 @@
     #daypicker {
       /* Do I need to remove the display flex if we have more days? */
       display: flex;
-      justify-content: space-between;
+      /* justify-content: space-between; */
       background-color: #FF8989;
       border-radius: 0.5rem;
       margin-bottom: 1rem;
+      /* TODO Get back to this for dynamic trip sizes */
       overflow: auto;
       white-space: nowrap;
     }
@@ -65,9 +66,10 @@
       text-align: center;
       padding: 14px;
       text-decoration: none;
+      width: 33%;
     }
     #daypicker a:hover {
-      background-color: #777;
+      background-color: #fa2a55;
     }
     h4, span {
       line-height: normal;
@@ -419,14 +421,15 @@
     // let state = fetch("/itineraries/paris/3day.json")
     // .then(res => res.json())
 
-    // We search for a lot of nodes, so do that all here in one go
-    // document.querySelectorAll("input[type=time]");
-
     const lists = document.getElementsByClassName('list');
     // THIS MUST REMAIN "OF"
     for (const list of lists) {
       Sortable.create(list, {
-        group: 'list',
+        group: {
+          name: "list",
+          pull: "clone",
+          revertClone: true, // This is needed so that clone doesn't pop back in the orig list
+        },
         delay: 400,
         // We really only need delay on mobile to allow dragging
         // and this works around a bug that prevents delays on Edge
@@ -435,6 +438,10 @@
         touchStartThreshold: 3,
         // handle: '.handle',
         animation: 150,
+        onEnd: function (event) {
+          event.clone.children[0].children[0].innerHTML = "Free Time"
+          event.clone.children[3].innerHTML = "Do whatever you want"
+        }
       });
     };
 
@@ -519,18 +526,20 @@
     }
 
     // TODO
-    // On pickup, replace the original spot with a 'Free Time'
-      // Actually you may want to create the free time when you drop the item
-      // This way there are not a billion dupes
     // On drop, choose between 3 options:
       // Don't change times, shift earlier sites by duration, shift later sites by duration
+    // Can't drag to different days on iOS (try other elements/sizes???)
+      // Can we make the daypicker a bit pretty as well
 
     // TODO
-    // Consider travel times to and from the hotel
+    // All our JS is based on very positional arguments. This is likely very brittle
+      // We should switch to something better for maintainability
     // Store state in URL
-
+      // Sortable has built in ways to manage state!
+      // https://github.com/SortableJS/Sortable#store
+    // Consider travel times to and from the hotel
+      
     // KNOWN BUGS
-    // Can't drag to different days on iOS
     // We don't account for events that split between multiple days (e.g. 11pm-1am)
       // Well we could just handle them on the day they start. That is totally fine
       // But we have some calculations currently assuming all times are on the same day
