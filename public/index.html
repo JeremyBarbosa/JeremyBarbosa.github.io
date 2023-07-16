@@ -90,6 +90,32 @@
     // let state = fetch("/itineraries/paris/3day.json")
     // .then(res => res.json())
 
+    function changeTimeToDuration(time) {
+      let splitTime = time.split(":")
+      let hours = parseInt(splitTime[0], 10) * 60
+      let minutes = parseInt(splitTime[1], 10)
+
+      return hours + minutes
+    }
+
+    // Inputs are the raw time values, not ints
+    function getDuration(beginningTime, endingTime) {
+      return changeTimeToDuration(endingTime) - changeTimeToDuration(beginningTime)
+    }
+
+    function changeDurationToTime(duration) {
+      let hours = Math.floor(duration / 60).toString();          
+      let minutes = (duration % 60).toString();
+
+      return hours.concat(":",minutes)
+    }
+
+    // origTime is raw time value, not an int
+    // Always adds, if you want subtraction, input a negative duration
+    function newTime(origTime, duration) {
+      return changeDurationToTime(changeTimeToDuration(origTime) + duration)
+    }
+
     const lists = document.getElementsByClassName('list');
     // THIS MUST REMAIN "OF"
     for (const list of lists) {
@@ -110,6 +136,33 @@
         onEnd: function (event) {
           event.clone.children[0].children[0].innerHTML = "Free Time"
           event.clone.children[3].innerHTML = "Do whatever you want"
+
+          // let duration = getDuration(event.item.children[1].value, event.item.children[2].value)
+
+          // // If moved within the same list
+          // if (event.from == event.to) {
+          //   // Move item from top towards bottom
+          //   if (event.oldIndex < event.newIndex) {
+
+          //     for (let index = 0; index < event.to.children.length; index++) {
+          //       if (index >= event.oldIndex && index < event.newIndex) {
+          //         // Items between old and new index need to have their times 
+          //         // subtracted by the duration of the original listItem
+          //         console.log(duration)
+          //         console.log(event.to.children[index].children[1].value)
+          //         console.log(event.to.children[index].children[2].value)
+          //         console.log(newTime(event.to.children[index].children[1].value, -duration))
+          //         console.log(newTime(event.to.children[index].children[2].value, -duration))
+          //         event.to.children[index].children[1].value = newTime(event.to.children[index].children[1].value, -duration)
+          //         event.to.children[index].children[2].value = newTime(event.to.children[index].children[2].value, -duration)
+          //       }
+          //     }
+          //   } 
+            // Move item from bottom towards top
+            // else {
+
+            // }
+          // }
         }
       });
     };
@@ -157,6 +210,7 @@
 
         // Change the time of the closest sibling depending on if the user
         // changes the beginning or ending time
+        // TODO Check if the duration of the changed sibling is still positive, if not change color
         if (event.target.className == "begin") {
           if (siblingListItems[ourIndex-1]) {
             siblingListItems[ourIndex-1].children[2].value = event.target.value
@@ -194,6 +248,7 @@
       });
     }
 
+
     // TODO
     // On drop, choose between 3 options:
       // Don't change times, shift earlier sites by duration, shift later sites by duration
@@ -201,12 +256,15 @@
       // Can we make the daypicker a bit pretty as well
 
     // TODO
+    // Give option for creating Free Time or shifting listItem
     // All our JS is based on very positional arguments. This is likely very brittle
       // We should switch to something better for maintainability
+    // Have some sort of effect for when drag starts (on mobile)
     // Store state in URL
       // Sortable has built in ways to manage state!
       // https://github.com/SortableJS/Sortable#store
     // Consider travel times to and from the hotel
+    // If the JS gets very complex, would a framework like Svelte/kit help?
       
     // KNOWN BUGS
     // We don't account for events that split between multiple days (e.g. 11pm-1am)
