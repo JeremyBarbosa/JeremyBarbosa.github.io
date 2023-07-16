@@ -6,32 +6,32 @@
 <div id="daypicker">
   {% for day in itinerary['schedule'] %}
   <!-- Try other elements, or perhaps sizing this better to get onDragEnter to work -->
-  <a data-day="{{loop.index0}}">Day {{loop.index}}</a>
+  <div class="dayButton" data-day="{{loop.index0}}">Day {{loop.index}}</div>
   {% endfor %}
 </div>
 
 {% for day in itinerary['schedule'] %}
-  {% set currentDay = loop.index %}
-  {% if currentDay == 1 %}
+  {% set currentDay = loop.index0 %}
+  {% if currentDay == 0 %}
     <div data-day="{{currentDay}}" class="list">
   {% else %}
     <div data-day="{{currentDay}}" class="list" style="display: none;">
   {% endif %}
     {% for sites in day %}
-      <!-- Don't put any state into listItem as they move around -->
-      <div class="listItem" draggable="true">
-        <div class="head">
-          <h4>{{ sites[1] }}</h4>
-          <span class="close">&Cross;</span>
+      <!-- I removed draggable=true here. Let me know if this breaks iOS -->
+      <div class="listItem" data-day="{{currentDay}}" data-index="{{loop.index0}}">
+        <div class="head" data-day="{{currentDay}}" data-index="{{loop.index0}}">
+          <h4 class="siteName" data-day="{{currentDay}}" data-index="{{loop.index0}}">{{ sites[1] }}</h4>
+          <span class="close" data-day="{{currentDay}}" data-index="{{loop.index0}}">&Cross;</span>
         </div>
-        <input type="time" class="begin" value="{{ sites[0] }}">
+        <input type="time" class="beginning" data-day="{{currentDay}}" data-index="{{loop.index0}}" value="{{ sites[0] }}">
         &mdash;
         {% if day[loop.index] %}
-          <input type="time" class="end" value="{{ day[loop.index][0] }}">
+          <input type="time" class="ending" data-day="{{currentDay}}" data-index="{{loop.index0}}" value="{{ day[loop.index][0] }}">
         {% else %}
-          <input type="time" class="end" value="22:00">
+          <input type="time" class="ending" data-day="{{currentDay}}" data-index="{{loop.index0}}" value="22:00">
         {% endif %}
-        <p>A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
+        <p class="description" data-day="{{currentDay}}" data-index="{{loop.index0}}">A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
       </div>
     {% endfor %}  
   </div>

@@ -59,7 +59,7 @@
       overflow: auto;
       white-space: nowrap;
     }
-    #daypicker a {
+    #daypicker div {
       display: inline-block;
       cursor: pointer;
       color: white;
@@ -68,7 +68,7 @@
       text-decoration: none;
       width: 33%;
     }
-    #daypicker a:hover {
+    #daypicker div:hover {
       background-color: #fa2a55;
     }
     h4, span {
@@ -104,16 +104,52 @@
     }
 
     function changeDurationToTime(duration) {
-      let hours = Math.floor(duration / 60).toString();          
-      let minutes = (duration % 60).toString();
+      let hours = Math.floor(duration / 60)
+      let hoursText
+      if (hours < 10) {
+        hoursText = "0".concat(hours.toString()) 
+      } else {
+        hoursText = hours.toString()
+      }
+           
+      let minutes = (duration % 60)
+      let minutesText
+      if (minutes < 10) {
+        minutesText = "0".concat(minutes.toString())
+      } else {
+        minutesText = minutes.toString()
+      }
 
-      return hours.concat(":",minutes)
+      return hoursText.concat(":",minutesText)
     }
 
     // origTime is raw time value, not an int
     // Always adds, if you want subtraction, input a negative duration
     function newTime(origTime, duration) {
       return changeDurationToTime(changeTimeToDuration(origTime) + duration)
+    }
+
+    function getSiblingElement(dataset, desiredElement) {
+      // Example input: ([data-day='1'][data-index='1'].siteName")
+      return document.querySelector(`
+      [data-day='${dataset.day}'][data-index='${dataset.index}']${desiredElement}
+      `)
+    }
+
+    function getPreviousListItemElement(dataset, desiredElement) {
+      newDataSet = {
+        day: dataset.day,
+        index: (parseInt(dataset.index)-1).toString()
+      }
+      return getSiblingElement(newDataSet, desiredElement)
+    }
+
+    function getNextListItemElement(dataset, desiredElement) {
+      newDataSet = {
+        day: dataset.day,
+        index: (parseInt(dataset.index)+1).toString()
+      }
+      return getSiblingElement(newDataSet, desiredElement)
     }
 
     const lists = document.getElementsByClassName('list');
@@ -123,38 +159,46 @@
         group: {
           name: "list",
           pull: "clone",
-          revertClone: true, // This is needed so that clone doesn't pop back in the orig list
+          revertClone: true, // This is needed so that clone doesn't jump around in the orig list
         },
+        draggable: ".listItem",
         delay: 400,
         // We really only need delay on mobile to allow dragging
         // and this works around a bug that prevents delays on Edge
         delayOnTouchOnly: true,
         // Needed for delay on some sensitive touch screens
         touchStartThreshold: 3,
-        // handle: '.handle',
         animation: 150,
+        // TODO Update day and index on move
         onEnd: function (event) {
-          event.clone.children[0].children[0].innerHTML = "Free Time"
-          event.clone.children[3].innerHTML = "Do whatever you want"
+          // Update day and index on move
+          event.item.dataset.day = event.to.dataset.day
+          event.item.dataset.index = event.newIndex
 
-          // let duration = getDuration(event.item.children[1].value, event.item.children[2].value)
+          // TODO Update day and index of all other impacted elements
+
+          // // Change the clone element (in the original position) to Free Time
+          // // WARNING Do not use sibling element with clone elements
+          // event.clone.querySelector(".siteName").innerHTML = "Free Time"
+          // event.clone.querySelector(".description").innerHTML = "Do whatever you want"
+
+          // let duration = getDuration(getSiblingElement(event.item.dataset, ".beginning").value, getSiblingElement(event.item.dataset, ".ending").value)
+          // // console.log(duration)
 
           // // If moved within the same list
           // if (event.from == event.to) {
           //   // Move item from top towards bottom
           //   if (event.oldIndex < event.newIndex) {
 
+          //     // Items between old and new index need to have their times 
+          //     // subtracted by the duration of the original listItem
           //     for (let index = 0; index < event.to.children.length; index++) {
           //       if (index >= event.oldIndex && index < event.newIndex) {
-          //         // Items between old and new index need to have their times 
-          //         // subtracted by the duration of the original listItem
-          //         console.log(duration)
-          //         console.log(event.to.children[index].children[1].value)
-          //         console.log(event.to.children[index].children[2].value)
-          //         console.log(newTime(event.to.children[index].children[1].value, -duration))
-          //         console.log(newTime(event.to.children[index].children[2].value, -duration))
-          //         event.to.children[index].children[1].value = newTime(event.to.children[index].children[1].value, -duration)
-          //         event.to.children[index].children[2].value = newTime(event.to.children[index].children[2].value, -duration)
+          //         currentElement = event.to.children[index]
+          //         currentElement.dataset.index = currentElement.dataset.index - 1
+          //         // WARNING You need a live element to update the time here, so we cannot assign it a variable first
+          //         getSiblingElement(currentElement.dataset, ".beginning").value = newTime(getSiblingElement(currentElement.dataset, ".beginning").value, -duration)
+          //         getSiblingElement(currentElement.dataset, ".ending").value = newTime(getSiblingElement(currentElement.dataset, ".ending").value, -duration)
           //       }
           //     }
           //   } 
@@ -162,12 +206,31 @@
             // else {
 
             // }
+
+            // Change time of the moved element itself,
+            // Based on the ending and beginning time of its neighbors
+            
+            // Get ending time of previous list item
+          //   let previousListItemEndingTime = getPreviousListItemElement(event.item.dataset, ".ending").value
+          //   // Make sure previous ending time exists before trying to change it
+          //   console.log(previousListItemEndingTime)
+          //   if (previousListItemEndingTime) {
+          //     console.log("reached")
+          //     getSiblingElement(event.item.dataset, ".beginning").value = previousListItemEndingTime
+          //   }
+
+          //   // Get beginning time of next list item
+          //   let nextListItemBeginningTime = getNextListItemElement(event.item.dataset, ".beginning")
+          //   // Make sure next beginning time exists before trying to change it
+          //   if (nextListItemBeginningTime) {
+          //     getSiblingElement(event.item.dataset, ".ending").value = nextListItemBeginningTime.value
+          //   }
           // }
         }
       });
     };
 
-    const menuItems = document.getElementsByTagName('a');
+    const menuItems = document.getElementsByClassName("dayButton");
     // THIS MUST REMAIN "OF"
     for (const menu of menuItems) {
       menu.addEventListener("dragenter", (event) => {
@@ -185,57 +248,62 @@
       });
     }
 
+    // Changes the beginning or ending time of sibling listItems 
+    // if the user changes the ending or beginning time of the current listItem
+    function changeSiblingTimes(event) {
+      // Change to event beginning time
+      if (event.target.className == "beginning") {
+        // Get ending time of previous list item
+        let previousListItemEndingTime = getPreviousListItemElement(event.target.dataset, ".ending")
+        // Make sure previous ending time exists before trying to change it
+        if (previousListItemEndingTime) {
+          previousListItemEndingTime.value = event.target.value
+          isDurationPositive(previousListItemEndingTime)
+        }
+      }
+      // Change to event ending time
+      else {
+        // Get beginning time of next list item
+        let nextListItemBeginningTime = getNextListItemElement(event.target.dataset, ".beginning")
+        // Make sure next beginning time exists before trying to change it
+        if (nextListItemBeginningTime) {
+          nextListItemBeginningTime.value = event.target.value
+          isDurationPositive(nextListItemBeginningTime)
+        }
+      }
+    }
+
+    // Check that the duration of any HTML element makes sense (is positive)
+    function isDurationPositive(element) {
+      // If the user changed the beginning time, we need to make sure
+      // it isn't later than the ending time
+      if (element.className == "beginning") {
+        endingTime = getSiblingElement(element.dataset, ".ending").value
+        if (changeTimeToDuration(element.value) > changeTimeToDuration(endingTime)) {
+          element.parentElement.style.background = "#fa2a55"
+        } else {
+          element.parentElement.style.background = "#FCAEAE"
+        }
+      }
+      // If the user changed the ending time, we need to make sure
+      // it isn't later than the beginning time
+      else {
+        beginningTime = getSiblingElement(element.dataset, ".beginning").value
+        if (changeTimeToDuration(element.value) < changeTimeToDuration(beginningTime)) {
+          element.parentElement.style.background = "#fa2a55"
+        } else {
+          element.parentElement.style.background = "#FCAEAE"
+        }
+      }
+    }
+
     const times = document.querySelectorAll("input[type=time]");
     // THIS MUST REMAIN "OF"
     for (const time of times) {
       time.addEventListener("change", (event) => {
-
-        // Get the node for our listItem head. This contains the name of the site
-        // and will help identify which node we are later
-        let ourListItemHead = event.target.parentElement.children[0]
-        
-        // time input -> listItem -> list -> all listItems of list (ordered)
-        let siblingListItems = event.target.parentElement.parentElement.children
-
-        // Search through all our sibling nodes to find our current index
-        // in the siblingListItems array
-        let currentIndex = 0
-        let ourIndex
-        for (const listItem of siblingListItems) {
-          if (listItem.children[0].isEqualNode(ourListItemHead)) {
-            ourIndex = currentIndex
-          }
-          currentIndex++
-        }
-
-        // Change the time of the closest sibling depending on if the user
-        // changes the beginning or ending time
+        changeSiblingTimes(event)
         // TODO Check if the duration of the changed sibling is still positive, if not change color
-        if (event.target.className == "begin") {
-          if (siblingListItems[ourIndex-1]) {
-            siblingListItems[ourIndex-1].children[2].value = event.target.value
-          }
-        } else {
-          if (siblingListItems[ourIndex+1]) {
-            siblingListItems[ourIndex+1].children[1].value = event.target.value
-          }
-        }
-
-        // Check that the duration of any event is positive
-        if (event.target.className == "begin") {
-          if (parseInt(event.target.value.replace(/:/, "")) > parseInt(event.target.parentElement.children[2].value.replace(/:/, ""))) {
-            event.target.parentElement.style.background = "#686868"
-          } else {
-            event.target.parentElement.style.background = "#FCAEAE"
-          }
-        } else {
-          if (parseInt(event.target.value.replace(/:/, "")) < parseInt(event.target.parentElement.children[1].value.replace(/:/, ""))) {
-            event.target.parentElement.style.background = "#686868"
-          } else {
-            event.target.parentElement.style.background = "#FCAEAE"
-          }
-        }
-
+        isDurationPositive(event.target)
       });
     }
 
@@ -243,8 +311,8 @@
     // THIS MUST REMAIN "OF"
     for (const close of closes) {
       close.addEventListener("click", (event) => {
-        event.target.parentElement.children[0].innerHTML = "Free Time"
-        event.target.parentElement.parentElement.children[3].innerHTML = "Do whatever you want"
+        getSiblingElement(event.target.dataset, ".siteName").innerHTML = "Free Time"
+        getSiblingElement(event.target.dataset, ".description").innerHTML = "Do whatever you want"
       });
     }
 
@@ -265,6 +333,9 @@
       // https://github.com/SortableJS/Sortable#store
     // Consider travel times to and from the hotel
     // If the JS gets very complex, would a framework like Svelte/kit help?
+    // There may be a point where we need to rethink how we handle time:
+      // Luxon, Day.js, Date and Intl objects
+      
       
     // KNOWN BUGS
     // We don't account for events that split between multiple days (e.g. 11pm-1am)
