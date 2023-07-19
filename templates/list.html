@@ -5,10 +5,8 @@
   <div class="swiper-wrapper">
 {% set itinerary = load_data(path="static/itineraries/paris/3day.json", format="json") %}
 {% for day in itinerary['schedule'] %}
-    <div class="container swiper-slide">
+    <div id="day-{{ loop.index0 }}" class="container swiper-slide">
     {% for sites in day %}
-      <!-- I removed draggable=true here. Let me know if this breaks iOS -->
-      <!-- Could we remove the listItem class and just target cards? -->
       <div class="card border-0 my-2">
         <div class="row gx-2">
             <div class="col-4">

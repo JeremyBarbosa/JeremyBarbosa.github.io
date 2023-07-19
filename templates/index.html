@@ -49,11 +49,31 @@
     // Should we have some special menu for moving items to a different day?
     // swiper.allowTouchMove = false; may be needed for use with SortableJS
     // This means we have to switch slides with the Swiper API
-    const swiper = new Swiper('.swiper', {
+    const swiper = new Swiper(".swiper", {
       speed: 400,
       spaceBetween: 100,
       // shortSwipes: false,
     });
+
+    for (let index = 0; index < 3; index++) {
+      const dayList = document.getElementById("day-"+index)
+      sortableInstance = Sortable.create(dayList, {
+        group: {
+          name: "shared",
+          pull: "clone",
+          revertClone: true, // This is needed so that clone doesn't jump around in the orig list
+        },
+        draggable: ".card",
+        delay: 400,
+        // We really only need delay on mobile to allow dragging
+        // and this works around a bug that prevents delays on Edge
+        delayOnTouchOnly: true,
+        // Needed for delay on some sensitive touch screens
+        touchStartThreshold: 3,
+        animation: 150,
+      });
+    }
+    
 
     // let state = fetch("/itineraries/paris/3day.json")
     // .then(res => res.json())
