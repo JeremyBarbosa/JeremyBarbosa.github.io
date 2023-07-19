@@ -3,318 +3,275 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>JHJ TRVLPLNNR</title>
+  <title>trvl plnnr</title>
+  <script src="/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/bootstrap-utilities.min.css">
+  <link rel="stylesheet" href="/bootstrap.min.css">
+  <script src="/swiper-bundle.min.js"></script>
+  <link rel="stylesheet" href="/swiper-bundle.min.css">
+  <script src="/Sortable.min.js"></script>
   <style>
     body {
-      margin: 0.5rem;
-      /* TODO We can pick a prettier font */
-      font: 1.25rem/1.5 sans-serif;
-      text-rendering: optimizeSpeed;
-      background: #FFEADD;
+      background: #75C2F6;
     }
-    .list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .listItem {
-      /* TODO The background being a photo of the attraction is also possible,
-      but care should be taken to make sure the text is still legible */
-      background: #FCAEAE;
-      border-radius: 0.5rem;
-      border: solid #FF8989;
-      padding: 0.5rem;
-      /* TODO Make height proportional to lengh, shrink and grow as needed */
-      /* Probs sizing per 30min, floored */
-      overflow: hidden;
-      min-height: 3rem;
-      /* cursor: move; */
-    }
-    .listItem > *, h4 {
-      margin: 0;
-    }
-    .head {
-      display: flex;
-      justify-content: space-between;
+    .card {
+      flex-direction: row;
       align-items: center;
     }
-    p {
-      font-size: 1rem;
+    .card img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      /* max-width: 30%; */
+      border-top-right-radius: 0;
+      border-top-left-radius: calc(0.25rem - 1px);
+      border-bottom-left-radius: calc(0.25rem - 1px);
     }
-    input[type=time] {
-      border: none;
-      background: #FF8989;
-      color: white;
-      border-radius: 0.2rem;
-      padding: 0;
-    }
-    #daypicker {
-      /* Do I need to remove the display flex if we have more days? */
-      display: flex;
-      /* justify-content: space-between; */
-      background-color: #FF8989;
-      border-radius: 0.5rem;
-      margin-bottom: 1rem;
-      /* TODO Get back to this for dynamic trip sizes */
-      overflow: auto;
-      white-space: nowrap;
-    }
-    #daypicker div {
-      display: inline-block;
-      cursor: pointer;
-      color: white;
-      text-align: center;
-      padding: 14px;
-      text-decoration: none;
-      width: 33%;
-    }
-    #daypicker div:hover {
-      background-color: #fa2a55;
-    }
-    h4, span {
-      line-height: normal;
-    }
-    .close {
-      cursor: pointer;
+    .card-title {
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1 style="font-size: 10vw; color: #FF6666; text-align: center; margin: 0;">Travel Planner</h1>
+    <h1 class="display-4 text-white text-center mt-1">trvl plnnr</h1>
   </header>
   {% block list %}
   {% endblock list %}
-  <script src="/Sortable.min.js"></script>
   <script>
     // let state = fetch("/itineraries/paris/3day.json")
     // .then(res => res.json())
+    // console.log(state)
 
-    function changeTimeToDuration(time) {
-      let splitTime = time.split(":")
-      let hours = parseInt(splitTime[0], 10) * 60
-      let minutes = parseInt(splitTime[1], 10)
+    // function changeTimeToDuration(time) {
+    //   let splitTime = time.split(":")
+    //   let hours = parseInt(splitTime[0], 10) * 60
+    //   let minutes = parseInt(splitTime[1], 10)
 
-      return hours + minutes
-    }
+    //   return hours + minutes
+    // }
 
-    // Inputs are the raw time values, not ints
-    function getDuration(beginningTime, endingTime) {
-      return changeTimeToDuration(endingTime) - changeTimeToDuration(beginningTime)
-    }
+    // // Inputs are the raw time values, not ints
+    // function getDuration(beginningTime, endingTime) {
+    //   return changeTimeToDuration(endingTime) - changeTimeToDuration(beginningTime)
+    // }
 
-    function changeDurationToTime(duration) {
-      let hours = Math.floor(duration / 60)
-      let hoursText
-      if (hours < 10) {
-        hoursText = "0".concat(hours.toString()) 
-      } else {
-        hoursText = hours.toString()
-      }
+    // function changeDurationToTime(duration) {
+    //   let hours = Math.floor(duration / 60)
+    //   let hoursText
+    //   if (hours < 10) {
+    //     hoursText = "0".concat(hours.toString()) 
+    //   } else {
+    //     hoursText = hours.toString()
+    //   }
            
-      let minutes = (duration % 60)
-      let minutesText
-      if (minutes < 10) {
-        minutesText = "0".concat(minutes.toString())
-      } else {
-        minutesText = minutes.toString()
-      }
+    //   let minutes = (duration % 60)
+    //   let minutesText
+    //   if (minutes < 10) {
+    //     minutesText = "0".concat(minutes.toString())
+    //   } else {
+    //     minutesText = minutes.toString()
+    //   }
 
-      return hoursText.concat(":",minutesText)
-    }
+    //   return hoursText.concat(":",minutesText)
+    // }
 
-    // origTime is raw time value, not an int
-    // Always adds, if you want subtraction, input a negative duration
-    function newTime(origTime, duration) {
-      return changeDurationToTime(changeTimeToDuration(origTime) + duration)
-    }
+    // // origTime is raw time value, not an int
+    // // Always adds, if you want subtraction, input a negative duration
+    // function newTime(origTime, duration) {
+    //   return changeDurationToTime(changeTimeToDuration(origTime) + duration)
+    // }
 
-    function getSiblingElement(dataset, desiredElement) {
-      // Example input: ([data-day='1'][data-index='1'].siteName")
-      return document.querySelector(`
-      [data-day='${dataset.day}'][data-index='${dataset.index}']${desiredElement}
-      `)
-    }
+    // function getSiblingElement(dataset, desiredElement) {
+    //   // Example input: ([data-day='1'][data-index='1'].siteName")
+    //   return document.querySelector(`
+    //   [data-day='${dataset.day}'][data-index='${dataset.index}']${desiredElement}
+    //   `)
+    // }
 
-    function getPreviousListItemElement(dataset, desiredElement) {
-      newDataSet = {
-        day: dataset.day,
-        index: (parseInt(dataset.index)-1).toString()
-      }
-      return getSiblingElement(newDataSet, desiredElement)
-    }
+    // function getPreviousListItemElement(dataset, desiredElement) {
+    //   newDataSet = {
+    //     day: dataset.day,
+    //     index: (parseInt(dataset.index)-1).toString()
+    //   }
+    //   return getSiblingElement(newDataSet, desiredElement)
+    // }
 
-    function getNextListItemElement(dataset, desiredElement) {
-      newDataSet = {
-        day: dataset.day,
-        index: (parseInt(dataset.index)+1).toString()
-      }
-      return getSiblingElement(newDataSet, desiredElement)
-    }
+    // function getNextListItemElement(dataset, desiredElement) {
+    //   newDataSet = {
+    //     day: dataset.day,
+    //     index: (parseInt(dataset.index)+1).toString()
+    //   }
+    //   return getSiblingElement(newDataSet, desiredElement)
+    // }
 
-    const lists = document.getElementsByClassName('list');
-    // THIS MUST REMAIN "OF"
-    for (const list of lists) {
-      Sortable.create(list, {
-        group: {
-          name: "list",
-          pull: "clone",
-          revertClone: true, // This is needed so that clone doesn't jump around in the orig list
-        },
-        draggable: ".listItem",
-        delay: 400,
-        // We really only need delay on mobile to allow dragging
-        // and this works around a bug that prevents delays on Edge
-        delayOnTouchOnly: true,
-        // Needed for delay on some sensitive touch screens
-        touchStartThreshold: 3,
-        animation: 150,
-        // TODO Update day and index on move
-        onEnd: function (event) {
-          // Update day and index on move
-          event.item.dataset.day = event.to.dataset.day
-          event.item.dataset.index = event.newIndex
+    // let sortableInstance
+    // const lists = document.getElementsByClassName('list');
+    // // THIS MUST REMAIN "OF"
+    // for (const list of lists) {
+    //   sortableInstance = Sortable.create(list, {
+    //     group: {
+    //       name: "list",
+    //       pull: "clone",
+    //       revertClone: true, // This is needed so that clone doesn't jump around in the orig list
+    //     },
+    //     draggable: ".listItem",
+    //     delay: 400,
+    //     // We really only need delay on mobile to allow dragging
+    //     // and this works around a bug that prevents delays on Edge
+    //     delayOnTouchOnly: true,
+    //     // Needed for delay on some sensitive touch screens
+    //     touchStartThreshold: 3,
+    //     animation: 150,
+    //     dataIdAttr: "data-siteName",
+    //     // TODO Update day and index on move
+    //     onEnd: function (event) {
+    //       // Update day and index on move
+    //       event.item.dataset.day = event.to.dataset.day
+    //       event.item.dataset.index = event.newIndex
 
-          // TODO Update day and index of all other impacted elements
+    //       // TODO Update day and index of all other impacted elements
 
-          // // Change the clone element (in the original position) to Free Time
-          // // WARNING Do not use sibling element with clone elements
-          // event.clone.querySelector(".siteName").innerHTML = "Free Time"
-          // event.clone.querySelector(".description").innerHTML = "Do whatever you want"
+    //       // // Change the clone element (in the original position) to Free Time
+    //       // // WARNING Do not use sibling element with clone elements
+    //       // event.clone.querySelector(".siteName").innerHTML = "Free Time"
+    //       // event.clone.querySelector(".description").innerHTML = "Do whatever you want"
 
-          // let duration = getDuration(getSiblingElement(event.item.dataset, ".beginning").value, getSiblingElement(event.item.dataset, ".ending").value)
-          // // console.log(duration)
+    //       // let duration = getDuration(getSiblingElement(event.item.dataset, ".beginning").value, getSiblingElement(event.item.dataset, ".ending").value)
+    //       // // console.log(duration)
 
-          // // If moved within the same list
-          // if (event.from == event.to) {
-          //   // Move item from top towards bottom
-          //   if (event.oldIndex < event.newIndex) {
+    //       // // If moved within the same list
+    //       // if (event.from == event.to) {
+    //       //   // Move item from top towards bottom
+    //       //   if (event.oldIndex < event.newIndex) {
 
-          //     // Items between old and new index need to have their times 
-          //     // subtracted by the duration of the original listItem
-          //     for (let index = 0; index < event.to.children.length; index++) {
-          //       if (index >= event.oldIndex && index < event.newIndex) {
-          //         currentElement = event.to.children[index]
-          //         currentElement.dataset.index = currentElement.dataset.index - 1
-          //         // WARNING You need a live element to update the time here, so we cannot assign it a variable first
-          //         getSiblingElement(currentElement.dataset, ".beginning").value = newTime(getSiblingElement(currentElement.dataset, ".beginning").value, -duration)
-          //         getSiblingElement(currentElement.dataset, ".ending").value = newTime(getSiblingElement(currentElement.dataset, ".ending").value, -duration)
-          //       }
-          //     }
-          //   } 
-            // Move item from bottom towards top
-            // else {
+    //       //     // Items between old and new index need to have their times 
+    //       //     // subtracted by the duration of the original listItem
+    //       //     for (let index = 0; index < event.to.children.length; index++) {
+    //       //       if (index >= event.oldIndex && index < event.newIndex) {
+    //       //         currentElement = event.to.children[index]
+    //       //         currentElement.dataset.index = currentElement.dataset.index - 1
+    //       //         // WARNING You need a live element to update the time here, so we cannot assign it a variable first
+    //       //         getSiblingElement(currentElement.dataset, ".beginning").value = newTime(getSiblingElement(currentElement.dataset, ".beginning").value, -duration)
+    //       //         getSiblingElement(currentElement.dataset, ".ending").value = newTime(getSiblingElement(currentElement.dataset, ".ending").value, -duration)
+    //       //       }
+    //       //     }
+    //       //   } 
+    //         // Move item from bottom towards top
+    //         // else {
 
-            // }
+    //         // }
 
-            // Change time of the moved element itself,
-            // Based on the ending and beginning time of its neighbors
+    //         // Change time of the moved element itself,
+    //         // Based on the ending and beginning time of its neighbors
             
-            // Get ending time of previous list item
-          //   let previousListItemEndingTime = getPreviousListItemElement(event.item.dataset, ".ending").value
-          //   // Make sure previous ending time exists before trying to change it
-          //   console.log(previousListItemEndingTime)
-          //   if (previousListItemEndingTime) {
-          //     console.log("reached")
-          //     getSiblingElement(event.item.dataset, ".beginning").value = previousListItemEndingTime
-          //   }
+    //         // Get ending time of previous list item
+    //       //   let previousListItemEndingTime = getPreviousListItemElement(event.item.dataset, ".ending").value
+    //       //   // Make sure previous ending time exists before trying to change it
+    //       //   console.log(previousListItemEndingTime)
+    //       //   if (previousListItemEndingTime) {
+    //       //     console.log("reached")
+    //       //     getSiblingElement(event.item.dataset, ".beginning").value = previousListItemEndingTime
+    //       //   }
 
-          //   // Get beginning time of next list item
-          //   let nextListItemBeginningTime = getNextListItemElement(event.item.dataset, ".beginning")
-          //   // Make sure next beginning time exists before trying to change it
-          //   if (nextListItemBeginningTime) {
-          //     getSiblingElement(event.item.dataset, ".ending").value = nextListItemBeginningTime.value
-          //   }
-          // }
-        }
-      });
-    };
+    //       //   // Get beginning time of next list item
+    //       //   let nextListItemBeginningTime = getNextListItemElement(event.item.dataset, ".beginning")
+    //       //   // Make sure next beginning time exists before trying to change it
+    //       //   if (nextListItemBeginningTime) {
+    //       //     getSiblingElement(event.item.dataset, ".ending").value = nextListItemBeginningTime.value
+    //       //   }
+    //       // }
+    //     }
+    //   });
+    // };
 
-    const menuItems = document.getElementsByClassName("dayButton");
-    // THIS MUST REMAIN "OF"
-    for (const menu of menuItems) {
-      menu.addEventListener("dragenter", (event) => {
-        for (const list of lists) {
-          list.style.display = 'none'
-        }
-        lists[event.target.dataset.day].style.display = 'flex';
-      });
+    // const menuItems = document.getElementsByClassName("dayButton");
+    // // THIS MUST REMAIN "OF"
+    // for (const menu of menuItems) {
+    //   menu.addEventListener("dragenter", (event) => {
+    //     for (const list of lists) {
+    //       list.style.display = 'none'
+    //     }
+    //     lists[event.target.dataset.day].style.display = 'flex';
+    //   });
 
-      menu.addEventListener("click", (event) => {
-        for (const list of lists) {
-          list.style.display = 'none'
-        }
-        lists[event.target.dataset.day].style.display = 'flex';
-      });
-    }
+    //   menu.addEventListener("click", (event) => {
+    //     for (const list of lists) {
+    //       list.style.display = 'none'
+    //     }
+    //     lists[event.target.dataset.day].style.display = 'flex';
+    //   });
+    // }
 
-    // Changes the beginning or ending time of sibling listItems 
-    // if the user changes the ending or beginning time of the current listItem
-    function changeSiblingTimes(event) {
-      // Change to event beginning time
-      if (event.target.className == "beginning") {
-        // Get ending time of previous list item
-        let previousListItemEndingTime = getPreviousListItemElement(event.target.dataset, ".ending")
-        // Make sure previous ending time exists before trying to change it
-        if (previousListItemEndingTime) {
-          previousListItemEndingTime.value = event.target.value
-          isDurationPositive(previousListItemEndingTime)
-        }
-      }
-      // Change to event ending time
-      else {
-        // Get beginning time of next list item
-        let nextListItemBeginningTime = getNextListItemElement(event.target.dataset, ".beginning")
-        // Make sure next beginning time exists before trying to change it
-        if (nextListItemBeginningTime) {
-          nextListItemBeginningTime.value = event.target.value
-          isDurationPositive(nextListItemBeginningTime)
-        }
-      }
-    }
+    // // Changes the beginning or ending time of sibling listItems 
+    // // if the user changes the ending or beginning time of the current listItem
+    // function changeSiblingTimes(event) {
+    //   // Change to event beginning time
+    //   if (event.target.className == "beginning") {
+    //     // Get ending time of previous list item
+    //     let previousListItemEndingTime = getPreviousListItemElement(event.target.dataset, ".ending")
+    //     // Make sure previous ending time exists before trying to change it
+    //     if (previousListItemEndingTime) {
+    //       previousListItemEndingTime.value = event.target.value
+    //       isDurationPositive(previousListItemEndingTime)
+    //     }
+    //   }
+    //   // Change to event ending time
+    //   else {
+    //     // Get beginning time of next list item
+    //     let nextListItemBeginningTime = getNextListItemElement(event.target.dataset, ".beginning")
+    //     // Make sure next beginning time exists before trying to change it
+    //     if (nextListItemBeginningTime) {
+    //       nextListItemBeginningTime.value = event.target.value
+    //       isDurationPositive(nextListItemBeginningTime)
+    //     }
+    //   }
+    // }
 
-    // Check that the duration of any HTML element makes sense (is positive)
-    function isDurationPositive(element) {
-      // If the user changed the beginning time, we need to make sure
-      // it isn't later than the ending time
-      if (element.className == "beginning") {
-        endingTime = getSiblingElement(element.dataset, ".ending").value
-        if (changeTimeToDuration(element.value) > changeTimeToDuration(endingTime)) {
-          element.parentElement.style.background = "#fa2a55"
-        } else {
-          element.parentElement.style.background = "#FCAEAE"
-        }
-      }
-      // If the user changed the ending time, we need to make sure
-      // it isn't later than the beginning time
-      else {
-        beginningTime = getSiblingElement(element.dataset, ".beginning").value
-        if (changeTimeToDuration(element.value) < changeTimeToDuration(beginningTime)) {
-          element.parentElement.style.background = "#fa2a55"
-        } else {
-          element.parentElement.style.background = "#FCAEAE"
-        }
-      }
-    }
+    // // Check that the duration of any HTML element makes sense (is positive)
+    // function isDurationPositive(element) {
+    //   // If the user changed the beginning time, we need to make sure
+    //   // it isn't later than the ending time
+    //   if (element.className == "beginning") {
+    //     endingTime = getSiblingElement(element.dataset, ".ending").value
+    //     if (changeTimeToDuration(element.value) > changeTimeToDuration(endingTime)) {
+    //       element.parentElement.style.background = "#fa2a55"
+    //     } else {
+    //       element.parentElement.style.background = "#FCAEAE"
+    //     }
+    //   }
+    //   // If the user changed the ending time, we need to make sure
+    //   // it isn't later than the beginning time
+    //   else {
+    //     beginningTime = getSiblingElement(element.dataset, ".beginning").value
+    //     if (changeTimeToDuration(element.value) < changeTimeToDuration(beginningTime)) {
+    //       element.parentElement.style.background = "#fa2a55"
+    //     } else {
+    //       element.parentElement.style.background = "#FCAEAE"
+    //     }
+    //   }
+    // }
 
-    const times = document.querySelectorAll("input[type=time]");
-    // THIS MUST REMAIN "OF"
-    for (const time of times) {
-      time.addEventListener("change", (event) => {
-        changeSiblingTimes(event)
-        // TODO Check if the duration of the changed sibling is still positive, if not change color
-        isDurationPositive(event.target)
-      });
-    }
+    // const times = document.querySelectorAll("input[type=time]");
+    // // THIS MUST REMAIN "OF"
+    // for (const time of times) {
+    //   time.addEventListener("change", (event) => {
+    //     changeSiblingTimes(event)
+    //     // TODO Check if the duration of the changed sibling is still positive, if not change color
+    //     isDurationPositive(event.target)
+    //   });
+    // }
 
-    const closes = document.getElementsByClassName('close');
-    // THIS MUST REMAIN "OF"
-    for (const close of closes) {
-      close.addEventListener("click", (event) => {
-        getSiblingElement(event.target.dataset, ".siteName").innerHTML = "Free Time"
-        getSiblingElement(event.target.dataset, ".description").innerHTML = "Do whatever you want"
-      });
-    }
+    // const closes = document.getElementsByClassName('close');
+    // // THIS MUST REMAIN "OF"
+    // for (const close of closes) {
+    //   close.addEventListener("click", (event) => {
+    //     getSiblingElement(event.target.dataset, ".siteName").innerHTML = "Free Time"
+    //     getSiblingElement(event.target.dataset, ".description").innerHTML = "Do whatever you want"
+    //   });
+    // }
 
 
     // TODO
@@ -335,7 +292,6 @@
     // If the JS gets very complex, would a framework like Svelte/kit help?
     // There may be a point where we need to rethink how we handle time:
       // Luxon, Day.js, Date and Intl objects
-      
       
     // KNOWN BUGS
     // We don't account for events that split between multiple days (e.g. 11pm-1am)

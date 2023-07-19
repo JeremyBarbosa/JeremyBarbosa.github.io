@@ -2,38 +2,37 @@
 
 {% block list %}
 {% set itinerary = load_data(path="static/itineraries/paris/3day.json", format="json") %}
-
-<div id="daypicker">
-  {% for day in itinerary['schedule'] %}
-  <!-- Try other elements, or perhaps sizing this better to get onDragEnter to work -->
-  <div class="dayButton" data-day="{{loop.index0}}">Day {{loop.index}}</div>
-  {% endfor %}
-</div>
-
 {% for day in itinerary['schedule'] %}
-  {% set currentDay = loop.index0 %}
-  {% if currentDay == 0 %}
-    <div data-day="{{currentDay}}" class="list">
-  {% else %}
-    <div data-day="{{currentDay}}" class="list" style="display: none;">
-  {% endif %}
+    <div class="container">
     {% for sites in day %}
       <!-- I removed draggable=true here. Let me know if this breaks iOS -->
-      <div class="listItem" data-day="{{currentDay}}" data-index="{{loop.index0}}">
-        <div class="head" data-day="{{currentDay}}" data-index="{{loop.index0}}">
-          <h4 class="siteName" data-day="{{currentDay}}" data-index="{{loop.index0}}">{{ sites[1] }}</h4>
-          <span class="close" data-day="{{currentDay}}" data-index="{{loop.index0}}">&Cross;</span>
+      <!-- Could we remove the listItem class and just target cards? -->
+      <div class="card border-0 my-2">
+        <div class="row gx-2">
+            <div class="col-4">
+                <img src="/Eiff.jpg" class="img-fluid" alt="">
+            </div>
+            <div class="col">
+                <div class="card-body py-2 ps-0">
+                    <div class="row justify-content-between">
+                      <h4 class="card-title col-10">{{ sites[1] }}</h4>
+                      <button type="button" class="btn-close col-auto" aria-label="Close"></button>
+                    </div>
+                    <div class="fs-6 pb-2">
+                      <input type="time" value="{{ sites[0] }}">
+                      /
+                      {% if day[loop.index] %}
+                      <input type="time" value="{{ day[loop.index][0] }}">
+                      {% else %}
+                      <input type="time" value="22:00">
+                      {% endif %}
+                    </div>
+                    <p class="card-text">The Eiffel Tower is a universally recognized symbol of the city.</p>
+                </div>
+            </div>
         </div>
-        <input type="time" class="beginning" data-day="{{currentDay}}" data-index="{{loop.index0}}" value="{{ sites[0] }}">
-        &mdash;
-        {% if day[loop.index] %}
-          <input type="time" class="ending" data-day="{{currentDay}}" data-index="{{loop.index0}}" value="{{ day[loop.index][0] }}">
-        {% else %}
-          <input type="time" class="ending" data-day="{{currentDay}}" data-index="{{loop.index0}}" value="22:00">
-        {% endif %}
-        <p class="description" data-day="{{currentDay}}" data-index="{{loop.index0}}">A wrought-iron lattice tower on the Champ de Mars in Paris, France.</p>
-      </div>
+    </div>
     {% endfor %}  
-  </div>
+    </div>
 {% endfor %}
 {% endblock list %}
