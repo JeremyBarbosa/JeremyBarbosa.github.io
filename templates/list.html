@@ -1,16 +1,18 @@
 {% extends "index.html" %}
 
+
 {% block list %}
 <div class="swiper">
   <div class="swiper-wrapper">
 {% set itinerary = load_data(path="static/itineraries/paris/3day.json", format="json") %}
-{% for day in itinerary['schedule'] %}
+{% set info = load_data(path="static/sites/paris.json", format="json") %}
+{% for day in itinerary["schedule"] %}
     <div id="day-{{ loop.index0 }}" class="container swiper-slide">
     {% for sites in day %}
       <div class="card border-0 my-2">
         <div class="row gx-2">
             <div class="col-4">
-                <img src="/Eiff.jpg" class="img-fluid" alt="">
+                <img src="/images/{{ info[sites[1]].Image }}" class="img-fluid" loading="lazy" alt="">
             </div>
             <div class="col">
                 <div class="card-body py-2 ps-0">
@@ -27,7 +29,7 @@
                       <input type="time" value="22:00">
                       {% endif %}
                     </div>
-                    <p class="card-text">The Eiffel Tower is a universally recognized symbol of the city.</p>
+                    <p class="card-text">{{ info[sites[1]].Description }}</p>
                 </div>
             </div>
         </div>

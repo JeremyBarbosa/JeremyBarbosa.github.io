@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>trvl plnnr</title>
-  <script src="/bootstrap.bundle.min.js"></script>
-  <link rel="stylesheet" href="/bootstrap-reboot.min.css">
-  <link rel="stylesheet" href="/bootstrap-grid.min.css">
-  <link rel="stylesheet" href="/bootstrap-utilities.min.css">
-  <link rel="stylesheet" href="/bootstrap.min.css">
-  <script src="/swiper-bundle.min.js"></script>
-  <link rel="stylesheet" href="/swiper-bundle.min.css">
-  <script src="/Sortable.min.js"></script>
+  <link rel="stylesheet" href="/packages/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="/packages/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/packages/bootstrap-utilities.min.css">
+  <link rel="stylesheet" href="/packages/bootstrap.min.css">
+  <link rel="stylesheet" href="/packages/swiper-bundle.min.css">
+  <script src="/packages/bootstrap.bundle.min.js"></script>
+  <script src="/packages/swiper-bundle.min.js"></script>
+  <script src="/packages/Sortable.min.js"></script>
   <style>
     body {
       background: #75C2F6;
@@ -49,15 +49,20 @@
     // Should we have some special menu for moving items to a different day?
     // swiper.allowTouchMove = false; may be needed for use with SortableJS
     // This means we have to switch slides with the Swiper API
+    // swiper.touches.currentY
     const swiper = new Swiper(".swiper", {
       speed: 400,
       spaceBetween: 100,
       // shortSwipes: false,
     });
 
+    const title = document.querySelector(".display-4")
+    title.innerHTML = swiper.touches.currentY
+
+    let sortableInstances = []
     for (let index = 0; index < 3; index++) {
       const dayList = document.getElementById("day-"+index)
-      sortableInstance = Sortable.create(dayList, {
+      let sortableInstance = Sortable.create(dayList, {
         group: {
           name: "shared",
           pull: "clone",
@@ -72,8 +77,11 @@
         touchStartThreshold: 3,
         animation: 150,
       });
+      sortableInstances.push(sortableInstance.toArray())
     }
     
+    // WE GOT F ING STATE LETS GOOOOO
+    console.log(sortableInstances)
 
     // let state = fetch("/itineraries/paris/3day.json")
     // .then(res => res.json())

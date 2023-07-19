@@ -1,20 +1,83 @@
 {
     "Eiffel Tower": {
+        "Image": "eiffeltower.jpg",
         "Description": "A wrought-iron lattice tower on the Champ de Mars in Paris, France.",
         "Address": "Champ de Mars, 5 Av. Anatole France, 75007 Paris, France",
         "Latitude": "48.8584",
         "Longitude": "2.2945"
     },
-    "Louvre": {
+    "Louvre Museum": {
+        "Image": "louvre.jpg",
         "Description": "Housed in the Louvre Palace built by Philip II (Philip Augustus), the Louvre Museum is a world-renowned art museum that is located in Paris, France.",
         "Address": "75001 Paris, France",
         "Latitude": "48.8606",
         "Longitude": "2.3376"
     },
     "Palace of Versailles": {
+        "Image": "versailles.jpg",
         "Description": "The Palace of Versailles is a former royal residence built by King Louis XIV.",
         "Address": "Place d'Armes, 78000 Versailles, France",
         "Latitude": "48.8049",
         "Longitude": "2.1204"
+    },
+    "Notre-Dame Cathedral": {
+        "Image": "notredame.jpg",
+        "Description": ""
+    },
+    "Sainte-Chapelle": {
+        "Image": "",
+        "Description": ""
+    },
+    "Centre Pompidou": {
+        "Image": "",
+        "Description": ""
+    },
+    "Ile Saint-Louis": {
+        "Image": "",
+        "Description": ""
+    },
+    "Trocadero Gardens, Palais de Chaillot": {
+        "Image": "",
+        "Description": ""
+    },
+    "Arc de Triomphe, Champs-Elysees": {
+        "Image": "",
+        "Description": ""
+    },
+    "Grand Palais, Petit Palais": {
+        "Image": "",
+        "Description": ""
+    },
+    "Parc Monceau": {
+        "Image": "",
+        "Description": ""
+    },
+    "Hall of Mirrors": {
+        "Image": "",
+        "Description": ""
+    },
+    "Gardens of Versailles": {
+        "Image": "",
+        "Description": ""
+    },
+    "Grand Trianon, Petit Trianon": {
+        "Image": "",
+        "Description": ""
+    },
+    "Marie Antoinette Estate": {
+        "Image": "",
+        "Description": ""
+    },
+    "Free Time": {
+        "Image": "free.png",
+        "Description": "Do whatever you want!"
+    },
+    "Lunch": {
+        "Image": "free.png",
+        "Description": "Eat something nice."
+    },
+    "Dinner": {
+        "Image": "free.png",
+        "Description": "Go all out!"
     }
 }
