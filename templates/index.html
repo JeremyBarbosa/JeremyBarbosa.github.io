@@ -13,10 +13,10 @@
   <link rel="stylesheet" href="/swiper-bundle.min.css">
   <script src="/Sortable.min.js"></script>
   <style>
-    html {
-      /* overflow: hidden; */
+    /* html {
+      overflow: hidden;
       overscroll-behavior: none;
-    }
+    } */
     body {
       background: #75C2F6;
     }
@@ -49,7 +49,10 @@
     // Initialize swiper
     // Should I use cssmode or will that ruin dragging?
     // What is edgeSwipeDetection
+    // touchReleaseOnEdges
     // Should we have some special menu for moving items to a different day?
+    // swiper.allowTouchMove = false; may be needed for use with SortableJS
+    // This means we have to switch slides with the Swiper API
     const swiper = new Swiper('.swiper', {
       speed: 400,
       spaceBetween: 100,
