@@ -13,6 +13,10 @@
   <link rel="stylesheet" href="/swiper-bundle.min.css">
   <script src="/Sortable.min.js"></script>
   <style>
+    html {
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
     body {
       background: #75C2F6;
     }
@@ -49,6 +53,7 @@
     const swiper = new Swiper('.swiper', {
       speed: 400,
       spaceBetween: 100,
+      shortSwipes: false,
     });
 
     // let state = fetch("/itineraries/paris/3day.json")
