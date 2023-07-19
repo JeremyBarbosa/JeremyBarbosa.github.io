@@ -41,6 +41,12 @@
   {% block list %}
   {% endblock list %}
   <script>
+    // Initialize swiper
+    const swiper = new Swiper('.swiper', {
+      speed: 400,
+      spaceBetween: 100,
+    });
+
     // let state = fetch("/itineraries/paris/3day.json")
     // .then(res => res.json())
     // console.log(state)
