@@ -37,11 +37,15 @@
 <body>
   <header>
     <h1 class="display-4 text-white text-center mt-1">trvl plnnr</h1>
+    <!-- Put day here -->
   </header>
   {% block list %}
   {% endblock list %}
   <script>
     // Initialize swiper
+    // Should I use cssmode or will that ruin dragging?
+    // What is edgeSwipeDetection
+    // Should we have some special menu for moving items to a different day?
     const swiper = new Swiper('.swiper', {
       speed: 400,
       spaceBetween: 100,
