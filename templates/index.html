@@ -56,9 +56,6 @@
       // shortSwipes: false,
     });
 
-    const title = document.querySelector(".display-4")
-    title.innerHTML = swiper.touches.currentY
-
     let sortableInstances = []
     for (let index = 0; index < 3; index++) {
       const dayList = document.getElementById("day-"+index)
@@ -76,6 +73,10 @@
         // Needed for delay on some sensitive touch screens
         touchStartThreshold: 3,
         animation: 150,
+        onStart: function (event) {
+          const title = document.querySelector(".display-4")
+          title.innerHTML = swiper.touches.currentY
+        }
       });
       sortableInstances.push(sortableInstance.toArray())
     }
