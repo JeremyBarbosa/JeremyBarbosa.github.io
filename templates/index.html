@@ -72,8 +72,13 @@
         touchStartThreshold: 3,
         animation: 150,
         ghostClass: "bg-info",
-        forceFallback: true,
+        // Attempt to make scrolling feel better on iOS
+        scroll: true,
+        // forceFallback: true,
+        forceAutoscrollFallback: true,
         scrollSensitivity: 100,
+        scrollSpeed: 30,
+        bubbleScroll: true,
         onStart: function (event) {
           swiper.disable()
         },
