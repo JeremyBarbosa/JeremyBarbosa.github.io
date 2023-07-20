@@ -1,0 +1,29 @@
+{
+    "schedule": [[
+        ["09:00", "Louvre Museum"],
+        ["11:00", "Notre-Dame Cathedral"],
+        ["13:00", "Lunch"],
+        ["14:30", "Sainte-Chapelle"],
+        ["16:30", "Centre Pompidou"],
+        ["18:30", "Ile Saint-Louis"],
+        ["20:00", "Dinner"]
+    ],
+    [
+        ["09:00", "Eiffel Tower"],
+        ["11:00", "Trocadero Gardens, Palais de Chaillot"],
+        ["13:00", "Lunch"],
+        ["14:30", "Arc de Triomphe, Champs-Elysees"],
+        ["16:30", "Grand Palais, Petit Palais"],
+        ["18:30", "Parc Monceau"],
+        ["20:00", "Dinner"]
+    ],
+     [
+        ["09:00", "Palace of Versailles"],
+        ["11:00", "Hall of Mirrors"],
+        ["13:00", "Lunch"],
+        ["14:30", "Gardens of Versailles"],
+        ["16:30", "Grand Trianon, Petit Trianon"],
+        ["18:30", "Marie Antoinette Estate"],
+        ["20:00", "Dinner"]
+    ]]
+}

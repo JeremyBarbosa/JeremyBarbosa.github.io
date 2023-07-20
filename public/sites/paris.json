@@ -1,0 +1,83 @@
+{
+    "Eiffel Tower": {
+        "Image": "eiffeltower.jpg",
+        "Description": "A wrought-iron lattice tower on the Champ de Mars in Paris, France.",
+        "Address": "Champ de Mars, 5 Av. Anatole France, 75007 Paris, France",
+        "Latitude": "48.8584",
+        "Longitude": "2.2945"
+    },
+    "Louvre Museum": {
+        "Image": "louvre.jpg",
+        "Description": "Housed in the Louvre Palace built by Philip II (Philip Augustus), the Louvre Museum is a world-renowned art museum that is located in Paris, France.",
+        "Address": "75001 Paris, France",
+        "Latitude": "48.8606",
+        "Longitude": "2.3376"
+    },
+    "Palace of Versailles": {
+        "Image": "versailles.jpg",
+        "Description": "The Palace of Versailles is a former royal residence built by King Louis XIV.",
+        "Address": "Place d'Armes, 78000 Versailles, France",
+        "Latitude": "48.8049",
+        "Longitude": "2.1204"
+    },
+    "Notre-Dame Cathedral": {
+        "Image": "notredame.jpg",
+        "Description": "A renowned architectural masterpiece symbolizing centuries of history and cultural significance."
+    },
+    "Sainte-Chapelle": {
+        "Image": "saintechapelle.jpg",
+        "Description": "A breathtaking masterpiece of Gothic architecture, it houses an exquisite collection of stained glass windows that tell biblical stories with unparalleled beauty."
+    },
+    "Centre Pompidou": {
+        "Image": "centrepompidou.jpg",
+        "Description": "The cultural landmark houses a vast collection of modern and contemporary art, serving as a hub for artistic expression and creative inspiration."
+    },
+    "Ile Saint-Louis": {
+        "Image": "ilesaintlouis.jpg",
+        "Description": "A historic island in the heart of Paris, known for its architectural charm and cultural significance."
+    },
+    "Trocadero Gardens, Palais de Chaillot": {
+        "Image": "palaisdechaillot.jpg",
+        "Description": "A historic landmark renowned for its architectural grandeur and panoramic views, serving as a symbol of cultural heritage and artistic appreciation."
+    },
+    "Arc de Triomphe, Champs-Elysees": {
+        "Image": "arcdetriomphe.jpg",
+        "Description": "A monumental triumphal arch, known for its grandeur and historical significance."
+    },
+    "Grand Palais, Petit Palais": {
+        "Image": "petitpalais.jpg",
+        "Description": "An iconic architectural masterpiece known for its majestic glass dome and hosting a variety of prestigious events and exhibitions."
+    },
+    "Parc Monceau": {
+        "Image": "parcmonceau.jpg",
+        "Description": "A picturesque urban oasis with ornate architecture, lush greenery, and winding paths in the heart of the city."
+    },
+    "Hall of Mirrors": {
+        "Image": "hallofmirrors.jpg",
+        "Description": "A stunning chamber adorned with reflective surfaces, creating an illusion of endless grandeur."
+    },
+    "Gardens of Versailles": {
+        "Image": "versaillesgarden.jpg",
+        "Description": "A majestic and meticulously landscaped outdoor haven with ornate fountains, geometrically designed flowerbeds, and sprawling lawns surrounding a grand palace."
+    },
+    "Grand Trianon, Petit Trianon": {
+        "Image": "grandtrianon.jpg",
+        "Description": "A stunning architectural gem nestled within picturesque gardens, renowned for its elegance and regal charm."
+    },
+    "Marie Antoinette Estate": {
+        "Image": "marieantoinetteestate.jpg",
+        "Description": "A grand historical estate in Paris, associated with a prominent figure from the past."
+    },
+    "Free Time": {
+        "Image": "free.jpg",
+        "Description": "Do whatever you want!"
+    },
+    "Lunch": {
+        "Image": "free.jpg",
+        "Description": "Eat something nice."
+    },
+    "Dinner": {
+        "Image": "free.jpg",
+        "Description": "Go all out!"
+    }
+}
