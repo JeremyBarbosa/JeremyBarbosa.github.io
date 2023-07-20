@@ -49,11 +49,9 @@
     // Should we have some special menu for moving items to a different day?
     // swiper.allowTouchMove = false; may be needed for use with SortableJS
     // This means we have to switch slides with the Swiper API
-    // swiper.touches.currentY
     const swiper = new Swiper(".swiper", {
       speed: 400,
       spaceBetween: 100,
-      // shortSwipes: false,
     });
 
     let sortableInstances = []
@@ -73,6 +71,7 @@
         // Needed for delay on some sensitive touch screens
         touchStartThreshold: 3,
         animation: 150,
+        ghostClass: "bg-info",
         onStart: function (event) {
           swiper.disable()
         },
