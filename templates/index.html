@@ -74,8 +74,10 @@
         touchStartThreshold: 3,
         animation: 150,
         onStart: function (event) {
-          const title = document.querySelector(".display-4")
-          title.innerHTML = swiper.touches.currentY
+          swiper.disable()
+        },
+        onEnd: function (event) {
+          swiper.enable()
         }
       });
       sortableInstances.push(sortableInstance.toArray())
