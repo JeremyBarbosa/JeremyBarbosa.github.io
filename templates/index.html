@@ -71,7 +71,9 @@
         // Needed for delay on some sensitive touch screens
         touchStartThreshold: 3,
         animation: 150,
-        ghostClass: "bg-info text-white",
+        ghostClass: "bg-info",
+        forceFallback: true,
+        scrollSensitivity: 100,
         onStart: function (event) {
           swiper.disable()
         },
