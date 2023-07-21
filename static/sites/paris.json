@@ -36,7 +36,7 @@
         "Image": "ilesaintlouis.jpg",
         "Description": "A historic island in the heart of Paris, known for its architectural charm and cultural significance."
     },
-    "Trocadero Gardens, Palais de Chaillot": {
+    "Trocadero Gardens": {
         "Image": "palaisdechaillot.jpg",
         "Description": "A historic landmark renowned for its architectural grandeur and panoramic views, serving as a symbol of cultural heritage and artistic appreciation."
     },
@@ -64,7 +64,7 @@
         "Image": "grandtrianon.jpg",
         "Description": "A stunning architectural gem nestled within picturesque gardens, renowned for its elegance and regal charm."
     },
-    "Marie Antoinette Estate": {
+    "Antoinette Estate": {
         "Image": "marieantoinetteestate.jpg",
         "Description": "A grand historical estate in Paris, associated with a prominent figure from the past."
     },

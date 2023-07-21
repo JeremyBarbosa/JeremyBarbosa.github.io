@@ -8,53 +8,83 @@
   <link rel="stylesheet" href="/packages/bootstrap-grid.min.css">
   <link rel="stylesheet" href="/packages/bootstrap-utilities.min.css">
   <link rel="stylesheet" href="/packages/bootstrap.min.css">
-  <link rel="stylesheet" href="/packages/swiper-bundle.min.css">
   <script src="/packages/bootstrap.bundle.min.js"></script>
-  <script src="/packages/swiper-bundle.min.js"></script>
   <script src="/packages/Sortable.min.js"></script>
   <style>
     body {
       background: #75C2F6;
     }
+    [id^='day-'] {
+      background: #FFEADD;
+    }
     .card {
-      flex-direction: row;
-      align-items: center;
+      max-height: 10rem;
+      overflow: hidden;
     }
     .card img {
+      /* Make image always fill the box and adjust its size on mobile */
       height: 100%;
       width: 100%;
       object-fit: cover;
-      /* max-width: 30%; */
+      /* Have the corners of the images match the rounding of the card */
       border-top-right-radius: 0;
       border-top-left-radius: calc(0.25rem - 1px);
       border-bottom-left-radius: calc(0.25rem - 1px);
     }
     .card-title {
       font-weight: bold;
+      /* Set the height to limit text length of titles */
+      height: 3.5rem;
+      overflow: hidden;
+    }
+    .dragging {
+      background: #1D5D9B;
+      color: white;
     }
   </style>
 </head>
 <body>
+  <!-- Title header -->
   <header>
     <h1 class="display-4 text-white text-center mt-1">trvl plnnr</h1>
-    <!-- Put day here -->
   </header>
+  <!-- Modal popup -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Remove Event</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <fieldset>
+            <legend>How should this event be removed?</legend>
+            <div>
+              <input type="radio" id="fill" name="drone" value="fill"
+                     checked>
+              <label class="ps-2" for="fill">Fill with a "Free Time" event</label>
+            </div>
+            <div>
+              <input type="radio" id="morePrev" name="drone" value="morePrev">
+              <label class="ps-2" for="morePrev">Spend more time at the previous location</label>
+            </div>
+            <div>
+              <input type="radio" id="moreNext" name="drone" value="moreNext">
+              <label class="ps-2" for="moreNext">Spend more time at the next location</label>
+            </div>
+        </fieldset>        
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Remove Event</button>
+        </div>
+      </div>
+    </div>
+  </div>  
   {% block list %}
   {% endblock list %}
   <script>
-    // Initialize swiper
-    // Should I use cssmode or will that ruin dragging?
-    // What is edgeSwipeDetection
-    // touchReleaseOnEdges
-    // Should we have some special menu for moving items to a different day?
-    // swiper.allowTouchMove = false; may be needed for use with SortableJS
-    // This means we have to switch slides with the Swiper API
-    const swiper = new Swiper(".swiper", {
-      speed: 400,
-      spaceBetween: 100,
-    });
-
-    let sortableInstances = []
+    let startingSortables = []
     for (let index = 0; index < 3; index++) {
       const dayList = document.getElementById("day-"+index)
       let sortableInstance = Sortable.create(dayList, {
@@ -64,78 +94,33 @@
           revertClone: true, // This is needed so that clone doesn't jump around in the orig list
         },
         draggable: ".card",
-        delay: 400,
-        // We really only need delay on mobile to allow dragging
-        // and this works around a bug that prevents delays on Edge
-        delayOnTouchOnly: true,
-        // Needed for delay on some sensitive touch screens
-        touchStartThreshold: 3,
         animation: 150,
-        ghostClass: "bg-info",
-        // Attempt to make scrolling feel better on iOS
-        // forceFallback: true,
-        scroll: true,
-        // forceAutoscrollFallback: true,
-        // scrollSensitivity: 100,
-        // scrollSpeed: 200,
-        // bubbleScroll: true,
-        onStart: function (event) {
-          swiper.disable()
+        ghostClass: "dragging",
+        store: {
+          // Called onEnd, when any item is dropped
+          // If moving between groups, gives sortable for new list, then old list
+          set: function (sortable) {
+            console.log(sortable.toArray())
+            // Check which of original list has at least 2 matches
+          },
         },
-        onEnd: function (event) {
-          swiper.enable()
+        onClone: function(event) {
+          makeCardFreeTime(event.clone)
         }
+        // onEnd: function(event) { 
+        // }
       });
-      sortableInstances.push(sortableInstance.toArray())
+      startingSortables.push(sortableInstance.toArray())
     }
-    
-    // WE GOT F ING STATE LETS GOOOOO
-    console.log(sortableInstances)
 
-    // let state = fetch("/itineraries/paris/3day.json")
-    // .then(res => res.json())
-    // console.log(state)
+    function makeCardFreeTime(cardElement) {
+      cardElement.dataset.id = "Free Time"
+      cardElement.querySelector(".img-fluid").src = "/images/paris/free.jpg"
+      cardElement.querySelector(".card-title").innerHTML = "Free Time"
+      cardElement.querySelector(".card-text").innerHTML = "Do whatever you want"
+    }
 
-    // function changeTimeToDuration(time) {
-    //   let splitTime = time.split(":")
-    //   let hours = parseInt(splitTime[0], 10) * 60
-    //   let minutes = parseInt(splitTime[1], 10)
-
-    //   return hours + minutes
-    // }
-
-    // // Inputs are the raw time values, not ints
-    // function getDuration(beginningTime, endingTime) {
-    //   return changeTimeToDuration(endingTime) - changeTimeToDuration(beginningTime)
-    // }
-
-    // function changeDurationToTime(duration) {
-    //   let hours = Math.floor(duration / 60)
-    //   let hoursText
-    //   if (hours < 10) {
-    //     hoursText = "0".concat(hours.toString()) 
-    //   } else {
-    //     hoursText = hours.toString()
-    //   }
-           
-    //   let minutes = (duration % 60)
-    //   let minutesText
-    //   if (minutes < 10) {
-    //     minutesText = "0".concat(minutes.toString())
-    //   } else {
-    //     minutesText = minutes.toString()
-    //   }
-
-    //   return hoursText.concat(":",minutesText)
-    // }
-
-    // // origTime is raw time value, not an int
-    // // Always adds, if you want subtraction, input a negative duration
-    // function newTime(origTime, duration) {
-    //   return changeDurationToTime(changeTimeToDuration(origTime) + duration)
-    // }
-
-    // function getSiblingElement(dataset, desiredElement) {
+    // function getCardElement(dataset, desiredElement) {
     //   // Example input: ([data-day='1'][data-index='1'].siteName")
     //   return document.querySelector(`
     //   [data-day='${dataset.day}'][data-index='${dataset.index}']${desiredElement}
@@ -238,24 +223,6 @@
     //   });
     // };
 
-    // const menuItems = document.getElementsByClassName("dayButton");
-    // // THIS MUST REMAIN "OF"
-    // for (const menu of menuItems) {
-    //   menu.addEventListener("dragenter", (event) => {
-    //     for (const list of lists) {
-    //       list.style.display = 'none'
-    //     }
-    //     lists[event.target.dataset.day].style.display = 'flex';
-    //   });
-
-    //   menu.addEventListener("click", (event) => {
-    //     for (const list of lists) {
-    //       list.style.display = 'none'
-    //     }
-    //     lists[event.target.dataset.day].style.display = 'flex';
-    //   });
-    // }
-
     // // Changes the beginning or ending time of sibling listItems 
     // // if the user changes the ending or beginning time of the current listItem
     // function changeSiblingTimes(event) {
@@ -315,39 +282,41 @@
     //   });
     // }
 
-    // const closes = document.getElementsByClassName('close');
+    // const closes = document.getElementsByClassName('btn-close');
     // // THIS MUST REMAIN "OF"
     // for (const close of closes) {
     //   close.addEventListener("click", (event) => {
-    //     getSiblingElement(event.target.dataset, ".siteName").innerHTML = "Free Time"
-    //     getSiblingElement(event.target.dataset, ".description").innerHTML = "Do whatever you want"
+    //     thisCard = event.target.closest(".card")
+    //     makeCardFreeTime(thisCard)
     //   });
     // }
 
 
-    // TODO
-    // On drop, choose between 3 options:
+
+    // NOW
+    // Remove attraction with option for:
+      // Fill free time, spend more time at previous site, spend more time at next site
+    // Change time when events are dragged:
       // Don't change times, shift earlier sites by duration, shift later sites by duration
-    // Can't drag to different days on iOS (try other elements/sizes???)
-      // Can we make the daypicker a bit pretty as well
+    // How do we look on mobile?
+
 
     // TODO
-    // Give option for creating Free Time or shifting listItem
-    // All our JS is based on very positional arguments. This is likely very brittle
-      // We should switch to something better for maintainability
-    // Have some sort of effect for when drag starts (on mobile)
-    // Store state in URL
-      // Sortable has built in ways to manage state!
-      // https://github.com/SortableJS/Sortable#store
-    // Consider travel times to and from the hotel
-    // If the JS gets very complex, would a framework like Svelte/kit help?
-    // There may be a point where we need to rethink how we handle time:
+    // How to handle both generic descriptions of locations and specific directions for the location
+    // Modify start/end time
+    // Account for travel, both between sites and at the beginning/end of day
+    // When moving to Cloudflare pages, upload images directly
+    // Make card height proportional to attraction length, shrinking/growing as needed (floor(time/30min))
+    // Optimize bootstrap bundle: https://getbootstrap.com/docs/5.3/customize/optimize/
+    // Save state to URL hash
+    // Load state from URL hash
+    // Handle dates and times more robustly
       // Luxon, Day.js, Date and Intl objects
-      
-    // KNOWN BUGS
-    // We don't account for events that split between multiple days (e.g. 11pm-1am)
-      // Well we could just handle them on the day they start. That is totally fine
-      // But we have some calculations currently assuming all times are on the same day
+      // Handle events split across multiple days (e.g. 11pm-1am)
+    // Make remove events more spatially aware
+      // Auto delete 'Free Time'
+      // Detect if beginning or end of list
+
     </script>
 </body>
 </html>

@@ -10,7 +10,7 @@
     ],
     [
         ["09:00", "Eiffel Tower"],
-        ["11:00", "Trocadero Gardens, Palais de Chaillot"],
+        ["11:00", "Trocadero Gardens"],
         ["13:00", "Lunch"],
         ["14:30", "Arc de Triomphe, Champs-Elysees"],
         ["16:30", "Grand Palais, Petit Palais"],
@@ -23,7 +23,7 @@
         ["13:00", "Lunch"],
         ["14:30", "Gardens of Versailles"],
         ["16:30", "Grand Trianon, Petit Trianon"],
-        ["18:30", "Marie Antoinette Estate"],
+        ["18:30", "Antoinette Estate"],
         ["20:00", "Dinner"]
     ]]
 }

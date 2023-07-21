@@ -1,15 +1,18 @@
 {% extends "index.html" %}
-
-
 {% block list %}
-<div class="swiper">
-  <div class="swiper-wrapper">
-{% set itinerary = load_data(path="static/itineraries/paris/3day.json", format="json") %}
-{% set info = load_data(path="static/sites/paris.json", format="json") %}
-{% for day in itinerary["schedule"] %}
-    <div id="day-{{ loop.index0 }}" class="container swiper-slide">
+
+<div class="container-fluid px-4">
+  <div class="row gap-2">
+  {% set itinerary = load_data(path="static/itineraries/paris/3day.json", format="json") %}
+  {% set info = load_data(path="static/sites/paris.json", format="json") %}
+  {% for day in itinerary["schedule"] %}
+    <div id="day-{{ loop.index0 }}" class="col p-2 rounded">
+      <div style="display: flex; justify-content: space-around;">
+        <h2 class="display-6">Paris</h2>
+        <h2 class="display-6">8/{{loop.index}}/24</h2>
+      </div>
     {% for sites in day %}
-      <div class="card border-0 my-2">
+      <div data-id="{{ sites[1] }}" class="card border-0 my-2">
         <div class="row gx-2">
             <div class="col-4">
                 <img src="/images/paris/{{ info[sites[1]].Image }}" class="img-fluid" loading="lazy" alt="">
@@ -18,16 +21,16 @@
                 <div class="card-body py-2 ps-0">
                     <div class="row justify-content-between">
                       <h4 class="card-title col-10">{{ sites[1] }}</h4>
-                      <button type="button" class="btn-close col-auto" aria-label="Close"></button>
+                      <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn-close col-auto" aria-label="Close"></button>
                     </div>
                     <div class="fs-6 pb-2">
                       <input type="time" value="{{ sites[0] }}">
-                      /
+                      <!-- /
                       {% if day[loop.index] %}
                       <input type="time" value="{{ day[loop.index][0] }}">
                       {% else %}
                       <input type="time" value="22:00">
-                      {% endif %}
+                      {% endif %} -->
                     </div>
                     <p class="card-text">{{ info[sites[1]].Description }}</p>
                 </div>
@@ -36,10 +39,7 @@
       </div>
     {% endfor %}  
     </div>
-{% endfor %}
+  {% endfor %}
   </div>
 </div>
-<!-- <div class="swiper-pagination"></div>
-<div class="swiper-button-prev"></div>
-<div class="swiper-button-next"></div> -->
 {% endblock list %}
