@@ -41,6 +41,9 @@
       background: #1D5D9B;
       color: white;
     }
+    .error {
+      background: #F65A83;
+    }
   </style>
 </head>
 <body>
@@ -48,7 +51,8 @@
   <header>
     <h1 class="display-4 text-white text-center mt-1">trvl plnnr</h1>
   </header>
-  <!-- Modal popup -->
+
+  <!-- Remove modal popup -->
   <div class="modal fade" id="removeModal" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -60,7 +64,7 @@
           <form id="removeForm">
             <fieldset>
               <legend>How should this event be removed?</legend>
-              <div>
+              <div id="fillDiv">
                 <input type="radio" id="fill" name="remove" value="fill" checked>
                 <label class="ps-2" for="fill">Fill with a "Free Time" event</label>
               </div>
@@ -81,10 +85,48 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Push times modal popup -->
+  <div class="modal fade" id="pushModal" tabindex="-1" aria-labelledby="pushModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="pushModalLabel">Push Events</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="pushForm">
+            <fieldset>
+              <legend>How should the other events in the day be adjusted?</legend>
+              <div id="pushDownDiv">
+                <input type="radio" id="pushDown" name="push" value="pushDown">
+                <label class="ps-2" for="pushDown">Push all of the events before this one to earlier in the day</label>
+              </div>
+              <div id="pushUpDiv">
+                <input type="radio" id="pushUp" name="push" value="pushUp">
+                <label class="ps-2" for="pushUp">Push all of the events after this one to later in the day</label>
+              </div>
+            </fieldset>    
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" form="pushForm" class="btn btn-primary" data-bs-dismiss="modal">Push Events</button>
+        </div>
+      </div>
+    </div>
   </div>  
+
+  <!-- The actual list of activities -->
   {% block list %}
   {% endblock list %}
+
+  <!-- All our JavaScript -->
   <script>
+  <script>
+    
+  <script>  
     
     const times = document.querySelectorAll("input[type=time]");
     // THIS MUST REMAIN "OF"
@@ -95,14 +137,17 @@
         if (event.target.className == "beginning") {
           let prevCard = getPrevCard(targetCard)
           getEndingTime(prevCard).value = event.target.value
+          checkDurationOfCard(prevCard)
         }
         // If change to ending time of card, change beginning of next card
         else {
           let nextCard = getNextCard(targetCard)
           getBeginningTime(nextCard).value = event.target.value
+          checkDurationOfCard(nextCard)
         }
 
         // Check if duration of new card is positive
+        checkDurationOfCard(targetCard)
       });
     }
 
@@ -111,9 +156,11 @@
       button.addEventListener("click", (event) => {
         const cardToRemove = event.target.closest(".card")
 
-        // Automatically remove Free Time
+        // If free time, don't give option to fill with free time
         if (cardToRemove.querySelector(".card-title").innerHTML == "Free Time") {
-          cardToRemove.remove()
+          document.querySelector("#fillDiv").style.display = "none"
+        } else {
+          document.querySelector("#fillDiv").style.display = "inline-block"
         }
 
         // If there is no previous card, hide the option to alter its time
@@ -123,7 +170,7 @@
           document.querySelector("#morePrevDiv").style.display = "inline-block"
         }
 
-        // If there is no previous card, hide the option to alter its time
+        // If there is no next card, hide the option to alter its time
         if (!getNextCard(cardToRemove)) {
           document.querySelector("#moreNextDiv").style.display = "none"
         } else {
@@ -133,23 +180,28 @@
     }
 
     // Grab input focus on modal pop up
-    let modalTriggerButton
-    const modal = document.getElementById('removeModal')
+    let removeTriggerButton
+    // TODO I believe modals are handled differently in 5.3
+    const removeModal = document.getElementById('removeModal')
+    const pushModal = document.getElementById('pushModal')
     const input = document.getElementById('fill')
-    modal.addEventListener('shown.bs.modal', () => {
+    removeModal.addEventListener('shown.bs.modal', (event) => {
       input.focus()
       // Button that triggered the modal
-      modalTriggerButton = event.relatedTarget
+      removeTriggerButton = event.relatedTarget
     })
 
-    const form = document.getElementById('removeForm')
-    form.addEventListener(
+    const removeForm = document.getElementById('removeForm')
+    removeForm.addEventListener(
       "submit",
       (event) => {
-        const data = new FormData(form);
-        const cardToRemove = modalTriggerButton.closest(".card")
-        const prevCard = cardToRemove.previousElementSibling
-        const nextCard = cardToRemove.nextElementSibling
+        // Prevent form from refreshing page
+        event.preventDefault();
+
+        const data = new FormData(removeForm);
+        const cardToRemove = removeTriggerButton.closest(".card")
+        const prevCard = getPrevCard(cardToRemove)
+        const nextCard = getNextCard(cardToRemove)
         switch (data.get("remove")) {
           case "fill":
             makeCardFreeTime(cardToRemove)
@@ -163,7 +215,52 @@
             cardToRemove.remove()
             break;
         }
+      },
+      false,
+    );
+
+    let draggedCard
+    const pushForm = document.getElementById('pushForm')
+    pushForm.addEventListener(
+      "submit",
+      (event) => {
+        // Prevent form from refreshing page
         event.preventDefault();
+
+        const data = new FormData(pushForm);
+        let durationOfDraggedCard = getDurationOfCard(draggedCard)
+        if (data.get("push") == "pushDown") {
+          let previousCard = getPrevCard(draggedCard)
+          while (previousCard) {
+            subtractDurationToTime(getBeginningTime(previousCard), durationOfDraggedCard)
+            subtractDurationToTime(getEndingTime(previousCard), durationOfDraggedCard)
+            previousCard = getPrevCard(previousCard)
+          }
+        }
+        else {
+          let nextCard = getNextCard(draggedCard)
+          while (nextCard) {
+            addDurationToTime(getBeginningTime(nextCard), durationOfDraggedCard)
+            addDurationToTime(getEndingTime(nextCard), durationOfDraggedCard)
+            nextCard = getNextCard(nextCard)
+          }
+        }
+        
+        let previousCard = getPrevCard(draggedCard)
+        let nextCard = getNextCard(draggedCard)
+        if (previousCard) {
+          getBeginningTime(draggedCard).value = getEndingTime(previousCard).value 
+        } else {
+          getBeginningTime(draggedCard).value = getBeginningTime(nextCard)
+          subtractDurationToTime(getBeginningTime(draggedCard), durationOfDraggedCard)
+        }
+        if (nextCard) {
+          getEndingTime(draggedCard).value = getBeginningTime(nextCard).value 
+        } else {
+          getEndingTime(draggedCard).value = getEndingTime(previousCard)
+          addDurationToTime(getEndingTime(draggedCard), durationOfDraggedCard)
+        }
+
       },
       false,
     );
@@ -184,15 +281,33 @@
           // Called onEnd, when any item is dropped
           // If moving between groups, gives sortable for new list, then old list
           set: function (sortable) {
-            console.log(sortable.toArray())
+            // console.log(sortable.toArray())
             // Check which of original list has at least 2 matches
           },
         },
         onClone: function(event) {
           makeCardFreeTime(event.clone)
+        },
+        onEnd: function(event) { 
+          draggedCard = event.item
+
+          // If there is no previous card, hide the option to alter its time
+          if (!getPrevCard(draggedCard)) {
+            document.querySelector("#pushDownDiv").style.display = "none"
+          } else {
+            document.querySelector("#pushDownDiv").style.display = "inline-block"
+          }
+
+          // If there is no next card, hide the option to alter its time
+          if (!getNextCard(draggedCard)) {
+            document.querySelector("#pushUpDiv").style.display = "none"
+          } else {
+            document.querySelector("#pushUpDiv").style.display = "inline-block"
+          }
+
+          let myModal = new bootstrap.Modal(document.getElementById('pushModal'))
+          myModal.show()
         }
-        // onEnd: function(event) { 
-        // }
       });
       startingSortables.push(sortableInstance.toArray())
     }
@@ -269,15 +384,22 @@
       }
     }
 
+    function checkDurationOfCard(cardElement) {
+      let duration = getDurationOfCard(cardElement)
+      if (duration <= 0) {
+        cardElement.classList.add("error");
+      } else {
+        cardElement.classList.remove("error");
+      }
+    }
+
     // NOW
-    // Change time when events are dragged:
-      // Don't change times, shift earlier sites by duration, shift later sites by duration
     // How do we look on mobile?
 
 
     // TODO
     // How to handle both generic descriptions of locations and specific directions for the location
-    // Modify start/end time
+    // Modify start/end time of day
     // Account for travel, both between sites and at the beginning/end of day
     // When moving to Cloudflare pages, upload images directly
     // Make card height proportional to attraction length, shrinking/growing as needed (floor(time/30min))
@@ -287,9 +409,6 @@
     // Handle dates and times more robustly
       // Luxon, Day.js, Date and Intl objects
       // Handle events split across multiple days (e.g. 11pm-1am)
-    // Make remove events more spatially aware
-      // Auto delete 'Free Time'
-      // Detect if beginning or end of list
 
     </script>
 </body>

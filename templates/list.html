@@ -2,11 +2,11 @@
 {% block list %}
 
 <div class="container-fluid px-4">
-  <div class="row gap-2">
+  <div class="row gap-2 row-gap-4">
   {% set itinerary = load_data(path="static/itineraries/paris/3day.json", format="json") %}
   {% set info = load_data(path="static/sites/paris.json", format="json") %}
   {% for day in itinerary["schedule"] %}
-    <div id="day-{{ loop.index0 }}" class="col p-2 rounded">
+    <div id="day-{{ loop.index0 }}" class="col-sm p-2 rounded">
       <div style="display: flex; justify-content: space-around;">
         <h2 class="display-6">Paris</h2>
         <h2 class="display-6">8/{{loop.index}}/24</h2>
@@ -29,7 +29,7 @@
                       {% if day[loop.index] %}
                       <input class="ending" type="time" value="{{ day[loop.index][0] }}">
                       {% else %}
-                      <input type="time" value="22:00">
+                      <input class="ending" type="time" value="22:00">
                       {% endif %}
                     </div>
                     <p class="card-text">{{ info[sites[1]].Description }}</p>
