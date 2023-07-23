@@ -123,9 +123,6 @@
   {% endblock list %}
 
   <!-- All our JavaScript -->
-  <script>
-  <script>
-    
   <script>  
     
     const times = document.querySelectorAll("input[type=time]");
@@ -251,13 +248,13 @@
         if (previousCard) {
           getBeginningTime(draggedCard).value = getEndingTime(previousCard).value 
         } else {
-          getBeginningTime(draggedCard).value = getBeginningTime(nextCard)
+          getBeginningTime(draggedCard).value = getBeginningTime(nextCard).value
           subtractDurationToTime(getBeginningTime(draggedCard), durationOfDraggedCard)
         }
         if (nextCard) {
           getEndingTime(draggedCard).value = getBeginningTime(nextCard).value 
         } else {
-          getEndingTime(draggedCard).value = getEndingTime(previousCard)
+          getEndingTime(draggedCard).value = getEndingTime(previousCard).value
           addDurationToTime(getEndingTime(draggedCard), durationOfDraggedCard)
         }
 
@@ -277,6 +274,9 @@
         draggable: ".card",
         animation: 150,
         ghostClass: "dragging",
+        delay:400,
+        delayOnTouchOnly:true,
+        touchStartThreshold:3,
         store: {
           // Called onEnd, when any item is dropped
           // If moving between groups, gives sortable for new list, then old list
@@ -392,10 +392,6 @@
         cardElement.classList.remove("error");
       }
     }
-
-    // NOW
-    // How do we look on mobile?
-
 
     // TODO
     // How to handle both generic descriptions of locations and specific directions for the location
