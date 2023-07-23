@@ -21,16 +21,16 @@
                 <div class="card-body py-2 ps-0">
                     <div class="row justify-content-between">
                       <h4 class="card-title col-10">{{ sites[1] }}</h4>
-                      <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn-close col-auto" aria-label="Close"></button>
+                      <button type="button" data-bs-toggle="modal" data-bs-target="#removeModal" class="removeButton btn-close col-auto" aria-label="Close"></button>
                     </div>
                     <div class="fs-6 pb-2">
-                      <input type="time" value="{{ sites[0] }}">
-                      <!-- /
+                      <input class="beginning" type="time" value="{{ sites[0] }}">
+                      /
                       {% if day[loop.index] %}
-                      <input type="time" value="{{ day[loop.index][0] }}">
+                      <input class="ending" type="time" value="{{ day[loop.index][0] }}">
                       {% else %}
                       <input type="time" value="22:00">
-                      {% endif %} -->
+                      {% endif %}
                     </div>
                     <p class="card-text">{{ info[sites[1]].Description }}</p>
                 </div>

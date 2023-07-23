@@ -49,34 +49,35 @@
     <h1 class="display-4 text-white text-center mt-1">trvl plnnr</h1>
   </header>
   <!-- Modal popup -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="removeModal" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Remove Event</h1>
+          <h1 class="modal-title fs-5" id="removeModalLabel">Remove Event</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <fieldset>
-            <legend>How should this event be removed?</legend>
-            <div>
-              <input type="radio" id="fill" name="drone" value="fill"
-                     checked>
-              <label class="ps-2" for="fill">Fill with a "Free Time" event</label>
-            </div>
-            <div>
-              <input type="radio" id="morePrev" name="drone" value="morePrev">
-              <label class="ps-2" for="morePrev">Spend more time at the previous location</label>
-            </div>
-            <div>
-              <input type="radio" id="moreNext" name="drone" value="moreNext">
-              <label class="ps-2" for="moreNext">Spend more time at the next location</label>
-            </div>
-        </fieldset>        
+          <form id="removeForm">
+            <fieldset>
+              <legend>How should this event be removed?</legend>
+              <div>
+                <input type="radio" id="fill" name="remove" value="fill" checked>
+                <label class="ps-2" for="fill">Fill with a "Free Time" event</label>
+              </div>
+              <div id="morePrevDiv">
+                <input type="radio" id="morePrev" name="remove" value="morePrev">
+                <label class="ps-2" for="morePrev">Spend more time at the previous location</label>
+              </div>
+              <div id="moreNextDiv">
+                <input type="radio" id="moreNext" name="remove" value="moreNext">
+                <label class="ps-2" for="moreNext">Spend more time at the next location</label>
+              </div>
+            </fieldset>    
+          </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Remove Event</button>
+          <button type="submit" form="removeForm" class="btn btn-primary" data-bs-dismiss="modal">Remove Event</button>
         </div>
       </div>
     </div>
@@ -84,6 +85,89 @@
   {% block list %}
   {% endblock list %}
   <script>
+    
+    const times = document.querySelectorAll("input[type=time]");
+    // THIS MUST REMAIN "OF"
+    for (const time of times) {
+      time.addEventListener("change", (event) => {
+        // If change to beginning time of card, change end of previous card
+        let targetCard = event.target.closest(".card")
+        if (event.target.className == "beginning") {
+          let prevCard = getPrevCard(targetCard)
+          getEndingTime(prevCard).value = event.target.value
+        }
+        // If change to ending time of card, change beginning of next card
+        else {
+          let nextCard = getNextCard(targetCard)
+          getBeginningTime(nextCard).value = event.target.value
+        }
+
+        // Check if duration of new card is positive
+      });
+    }
+
+    const removeButtons = document.getElementsByClassName("removeButton")
+    for (const button of removeButtons) {
+      button.addEventListener("click", (event) => {
+        const cardToRemove = event.target.closest(".card")
+
+        // Automatically remove Free Time
+        if (cardToRemove.querySelector(".card-title").innerHTML == "Free Time") {
+          cardToRemove.remove()
+        }
+
+        // If there is no previous card, hide the option to alter its time
+        if (!getPrevCard(cardToRemove)) {
+          document.querySelector("#morePrevDiv").style.display = "none"
+        } else {
+          document.querySelector("#morePrevDiv").style.display = "inline-block"
+        }
+
+        // If there is no previous card, hide the option to alter its time
+        if (!getNextCard(cardToRemove)) {
+          document.querySelector("#moreNextDiv").style.display = "none"
+        } else {
+          document.querySelector("#moreNextDiv").style.display = "inline-block"
+        }
+      })
+    }
+
+    // Grab input focus on modal pop up
+    let modalTriggerButton
+    const modal = document.getElementById('removeModal')
+    const input = document.getElementById('fill')
+    modal.addEventListener('shown.bs.modal', () => {
+      input.focus()
+      // Button that triggered the modal
+      modalTriggerButton = event.relatedTarget
+    })
+
+    const form = document.getElementById('removeForm')
+    form.addEventListener(
+      "submit",
+      (event) => {
+        const data = new FormData(form);
+        const cardToRemove = modalTriggerButton.closest(".card")
+        const prevCard = cardToRemove.previousElementSibling
+        const nextCard = cardToRemove.nextElementSibling
+        switch (data.get("remove")) {
+          case "fill":
+            makeCardFreeTime(cardToRemove)
+            break
+          case "morePrev":
+            addDurationToTime(getEndingTime(prevCard), getDurationOfCard(cardToRemove))
+            cardToRemove.remove()
+            break
+          case "moreNext":
+            subtractDurationToTime(getBeginningTime(nextCard), getDurationOfCard(cardToRemove))
+            cardToRemove.remove()
+            break;
+        }
+        event.preventDefault();
+      },
+      false,
+    );
+
     let startingSortables = []
     for (let index = 0; index < 3; index++) {
       const dayList = document.getElementById("day-"+index)
@@ -113,6 +197,53 @@
       startingSortables.push(sortableInstance.toArray())
     }
 
+    function getBeginningTime(cardElement) {
+      return cardElement.querySelector(".beginning")
+    }
+
+    function getEndingTime(cardElement) {
+      return cardElement.querySelector(".ending")
+    }
+
+    function timeInputToDate(timeInput) {
+      return new Date('1970-01-01T' + timeInput.value + ':00Z')
+    }
+
+    function getDurationOfCard(cardElement) {
+      // Suppose you have two time inputs in the format 'HH:MM'
+      let beginningTime = getBeginningTime(cardElement)
+      let endingTime = getEndingTime(cardElement)
+
+      // You can use the Date constructor to create Date objects from these times
+      let beginningDate = timeInputToDate(beginningTime)
+      let endingDate = timeInputToDate(endingTime)
+
+      // Now you can subtract the two dates to get the difference in milliseconds
+      let diff = endingDate - beginningDate
+
+      // Convert the difference from milliseconds to minutes
+      return (diff / 1000 / 60)
+    }
+
+    function addDurationToTime(timeInput, duration) {
+      // Create a Date object for this time
+      let tempDate = timeInputToDate(timeInput)
+
+      // Add the duration to it
+      tempDate.setMinutes(tempDate.getMinutes() + duration);
+
+      // Extract the new time
+      let hours = tempDate.getUTCHours();
+      let minutes = tempDate.getUTCMinutes();
+
+      // Format the new time as a string
+      timeInput.value = ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
+    }
+
+    function subtractDurationToTime(timeInput, duration) {
+      addDurationToTime(timeInput, -duration)
+    }
+
     function makeCardFreeTime(cardElement) {
       cardElement.dataset.id = "Free Time"
       cardElement.querySelector(".img-fluid").src = "/images/paris/free.jpg"
@@ -120,182 +251,25 @@
       cardElement.querySelector(".card-text").innerHTML = "Do whatever you want"
     }
 
-    // function getCardElement(dataset, desiredElement) {
-    //   // Example input: ([data-day='1'][data-index='1'].siteName")
-    //   return document.querySelector(`
-    //   [data-day='${dataset.day}'][data-index='${dataset.index}']${desiredElement}
-    //   `)
-    // }
+    function getNextCard(cardElement) {
+      const nextCard = cardElement.nextElementSibling
+      if (!nextCard || !nextCard.className.includes("card")) {
+        return null
+      } else {
+        return nextCard
+      }
+    }
 
-    // function getPreviousListItemElement(dataset, desiredElement) {
-    //   newDataSet = {
-    //     day: dataset.day,
-    //     index: (parseInt(dataset.index)-1).toString()
-    //   }
-    //   return getSiblingElement(newDataSet, desiredElement)
-    // }
-
-    // function getNextListItemElement(dataset, desiredElement) {
-    //   newDataSet = {
-    //     day: dataset.day,
-    //     index: (parseInt(dataset.index)+1).toString()
-    //   }
-    //   return getSiblingElement(newDataSet, desiredElement)
-    // }
-
-    // let sortableInstance
-    // const lists = document.getElementsByClassName('list');
-    // // THIS MUST REMAIN "OF"
-    // for (const list of lists) {
-    //   sortableInstance = Sortable.create(list, {
-    //     group: {
-    //       name: "list",
-    //       pull: "clone",
-    //       revertClone: true, // This is needed so that clone doesn't jump around in the orig list
-    //     },
-    //     draggable: ".listItem",
-    //     delay: 400,
-    //     // We really only need delay on mobile to allow dragging
-    //     // and this works around a bug that prevents delays on Edge
-    //     delayOnTouchOnly: true,
-    //     // Needed for delay on some sensitive touch screens
-    //     touchStartThreshold: 3,
-    //     animation: 150,
-    //     dataIdAttr: "data-siteName",
-    //     // TODO Update day and index on move
-    //     onEnd: function (event) {
-    //       // Update day and index on move
-    //       event.item.dataset.day = event.to.dataset.day
-    //       event.item.dataset.index = event.newIndex
-
-    //       // TODO Update day and index of all other impacted elements
-
-    //       // // Change the clone element (in the original position) to Free Time
-    //       // // WARNING Do not use sibling element with clone elements
-    //       // event.clone.querySelector(".siteName").innerHTML = "Free Time"
-    //       // event.clone.querySelector(".description").innerHTML = "Do whatever you want"
-
-    //       // let duration = getDuration(getSiblingElement(event.item.dataset, ".beginning").value, getSiblingElement(event.item.dataset, ".ending").value)
-    //       // // console.log(duration)
-
-    //       // // If moved within the same list
-    //       // if (event.from == event.to) {
-    //       //   // Move item from top towards bottom
-    //       //   if (event.oldIndex < event.newIndex) {
-
-    //       //     // Items between old and new index need to have their times 
-    //       //     // subtracted by the duration of the original listItem
-    //       //     for (let index = 0; index < event.to.children.length; index++) {
-    //       //       if (index >= event.oldIndex && index < event.newIndex) {
-    //       //         currentElement = event.to.children[index]
-    //       //         currentElement.dataset.index = currentElement.dataset.index - 1
-    //       //         // WARNING You need a live element to update the time here, so we cannot assign it a variable first
-    //       //         getSiblingElement(currentElement.dataset, ".beginning").value = newTime(getSiblingElement(currentElement.dataset, ".beginning").value, -duration)
-    //       //         getSiblingElement(currentElement.dataset, ".ending").value = newTime(getSiblingElement(currentElement.dataset, ".ending").value, -duration)
-    //       //       }
-    //       //     }
-    //       //   } 
-    //         // Move item from bottom towards top
-    //         // else {
-
-    //         // }
-
-    //         // Change time of the moved element itself,
-    //         // Based on the ending and beginning time of its neighbors
-            
-    //         // Get ending time of previous list item
-    //       //   let previousListItemEndingTime = getPreviousListItemElement(event.item.dataset, ".ending").value
-    //       //   // Make sure previous ending time exists before trying to change it
-    //       //   console.log(previousListItemEndingTime)
-    //       //   if (previousListItemEndingTime) {
-    //       //     console.log("reached")
-    //       //     getSiblingElement(event.item.dataset, ".beginning").value = previousListItemEndingTime
-    //       //   }
-
-    //       //   // Get beginning time of next list item
-    //       //   let nextListItemBeginningTime = getNextListItemElement(event.item.dataset, ".beginning")
-    //       //   // Make sure next beginning time exists before trying to change it
-    //       //   if (nextListItemBeginningTime) {
-    //       //     getSiblingElement(event.item.dataset, ".ending").value = nextListItemBeginningTime.value
-    //       //   }
-    //       // }
-    //     }
-    //   });
-    // };
-
-    // // Changes the beginning or ending time of sibling listItems 
-    // // if the user changes the ending or beginning time of the current listItem
-    // function changeSiblingTimes(event) {
-    //   // Change to event beginning time
-    //   if (event.target.className == "beginning") {
-    //     // Get ending time of previous list item
-    //     let previousListItemEndingTime = getPreviousListItemElement(event.target.dataset, ".ending")
-    //     // Make sure previous ending time exists before trying to change it
-    //     if (previousListItemEndingTime) {
-    //       previousListItemEndingTime.value = event.target.value
-    //       isDurationPositive(previousListItemEndingTime)
-    //     }
-    //   }
-    //   // Change to event ending time
-    //   else {
-    //     // Get beginning time of next list item
-    //     let nextListItemBeginningTime = getNextListItemElement(event.target.dataset, ".beginning")
-    //     // Make sure next beginning time exists before trying to change it
-    //     if (nextListItemBeginningTime) {
-    //       nextListItemBeginningTime.value = event.target.value
-    //       isDurationPositive(nextListItemBeginningTime)
-    //     }
-    //   }
-    // }
-
-    // // Check that the duration of any HTML element makes sense (is positive)
-    // function isDurationPositive(element) {
-    //   // If the user changed the beginning time, we need to make sure
-    //   // it isn't later than the ending time
-    //   if (element.className == "beginning") {
-    //     endingTime = getSiblingElement(element.dataset, ".ending").value
-    //     if (changeTimeToDuration(element.value) > changeTimeToDuration(endingTime)) {
-    //       element.parentElement.style.background = "#fa2a55"
-    //     } else {
-    //       element.parentElement.style.background = "#FCAEAE"
-    //     }
-    //   }
-    //   // If the user changed the ending time, we need to make sure
-    //   // it isn't later than the beginning time
-    //   else {
-    //     beginningTime = getSiblingElement(element.dataset, ".beginning").value
-    //     if (changeTimeToDuration(element.value) < changeTimeToDuration(beginningTime)) {
-    //       element.parentElement.style.background = "#fa2a55"
-    //     } else {
-    //       element.parentElement.style.background = "#FCAEAE"
-    //     }
-    //   }
-    // }
-
-    // const times = document.querySelectorAll("input[type=time]");
-    // // THIS MUST REMAIN "OF"
-    // for (const time of times) {
-    //   time.addEventListener("change", (event) => {
-    //     changeSiblingTimes(event)
-    //     // TODO Check if the duration of the changed sibling is still positive, if not change color
-    //     isDurationPositive(event.target)
-    //   });
-    // }
-
-    // const closes = document.getElementsByClassName('btn-close');
-    // // THIS MUST REMAIN "OF"
-    // for (const close of closes) {
-    //   close.addEventListener("click", (event) => {
-    //     thisCard = event.target.closest(".card")
-    //     makeCardFreeTime(thisCard)
-    //   });
-    // }
-
-
+    function getPrevCard(cardElement) {
+      const prevCard = cardElement.previousElementSibling
+      if (!prevCard || !prevCard.className.includes("card")) {
+        return null
+      } else {
+        return prevCard
+      }
+    }
 
     // NOW
-    // Remove attraction with option for:
-      // Fill free time, spend more time at previous site, spend more time at next site
     // Change time when events are dragged:
       // Don't change times, shift earlier sites by duration, shift later sites by duration
     // How do we look on mobile?

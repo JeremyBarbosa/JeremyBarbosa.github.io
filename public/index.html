@@ -1,1 +1,296 @@
-<!doctype html><html><head><meta charset=utf-8><meta content="width=device-width,initial-scale=1" name=viewport><title>trvl plnnr</title><link href=/packages/bootstrap-reboot.min.css rel=stylesheet><link href=/packages/bootstrap-grid.min.css rel=stylesheet><link href=/packages/bootstrap-utilities.min.css rel=stylesheet><link href=/packages/bootstrap.min.css rel=stylesheet><script src=/packages/bootstrap.bundle.min.js></script><script src=/packages/Sortable.min.js></script><style>body{background:#75c2f6}[id^='day-']{background:#ffeadd}.card{max-height:10rem;overflow:hidden}.card img{height:100%;width:100%;object-fit:cover;border-top-right-radius:0;border-top-left-radius:calc(0.25rem - 1px);border-bottom-left-radius:calc(0.25rem - 1px)}.card-title{font-weight:700;height:3.5rem;overflow:hidden}.dragging{background:#1d5d9b;color:white}</style><body><header><h1 class="display-4 text-white text-center mt-1">trvl plnnr</h1></header><div class="modal fade" aria-hidden=true aria-labelledby=exampleModalLabel id=exampleModal tabindex=-1><div class=modal-dialog><div class=modal-content><div class=modal-header><h1 class="modal-title fs-5" id=exampleModalLabel>Remove Event</h1><button aria-label=Close class=btn-close data-bs-dismiss=modal type=button></button></div><div class=modal-body><fieldset><legend>How should this event be removed?</legend><div><input checked id=fill name=drone type=radio value=fill><label class=ps-2 for=fill>Fill with a "Free Time" event</label></div><div><input id=morePrev name=drone type=radio value=morePrev><label class=ps-2 for=morePrev>Spend more time at the previous location</label></div><div><input id=moreNext name=drone type=radio value=moreNext><label class=ps-2 for=moreNext>Spend more time at the next location</label></div></fieldset></div><div class=modal-footer><button class="btn btn-secondary" data-bs-dismiss=modal type=button>Close</button><button class="btn btn-primary" type=button>Remove Event</button></div></div></div></div><script>let startingSortables=[];for(let a=0;a<3;a++){const b=document.getElementById("day-"+ a);let c=Sortable.create(b,{group:{name:"shared",pull:"clone",revertClone:true},draggable:".card",animation:150,ghostClass:"dragging",store:{set:function(d){console.log(d.toArray())}},onClone:function(d){makeCardFreeTime(d.clone)}});startingSortables.push(c.toArray())};function makeCardFreeTime(a){a.dataset.id="Free Time";a.querySelector(".img-fluid").src="/images/paris/free.jpg";a.querySelector(".card-title").innerHTML="Free Time";a.querySelector(".card-text").innerHTML="Do whatever you want"}</script>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>trvl plnnr</title>
+  <link rel="stylesheet" href="/packages/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="/packages/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/packages/bootstrap-utilities.min.css">
+  <link rel="stylesheet" href="/packages/bootstrap.min.css">
+  <script src="/packages/bootstrap.bundle.min.js"></script>
+  <script src="/packages/Sortable.min.js"></script>
+  <style>
+    body {
+      background: #75C2F6;
+    }
+    [id^='day-'] {
+      background: #FFEADD;
+    }
+    .card {
+      max-height: 10rem;
+      overflow: hidden;
+    }
+    .card img {
+      /* Make image always fill the box and adjust its size on mobile */
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      /* Have the corners of the images match the rounding of the card */
+      border-top-right-radius: 0;
+      border-top-left-radius: calc(0.25rem - 1px);
+      border-bottom-left-radius: calc(0.25rem - 1px);
+    }
+    .card-title {
+      font-weight: bold;
+      /* Set the height to limit text length of titles */
+      height: 3.5rem;
+      overflow: hidden;
+    }
+    .dragging {
+      background: #1D5D9B;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Title header -->
+  <header>
+    <h1 class="display-4 text-white text-center mt-1">trvl plnnr</h1>
+  </header>
+  <!-- Modal popup -->
+  <div class="modal fade" id="removeModal" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="removeModalLabel">Remove Event</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="removeForm">
+            <fieldset>
+              <legend>How should this event be removed?</legend>
+              <div>
+                <input type="radio" id="fill" name="remove" value="fill" checked>
+                <label class="ps-2" for="fill">Fill with a "Free Time" event</label>
+              </div>
+              <div id="morePrevDiv">
+                <input type="radio" id="morePrev" name="remove" value="morePrev">
+                <label class="ps-2" for="morePrev">Spend more time at the previous location</label>
+              </div>
+              <div id="moreNextDiv">
+                <input type="radio" id="moreNext" name="remove" value="moreNext">
+                <label class="ps-2" for="moreNext">Spend more time at the next location</label>
+              </div>
+            </fieldset>    
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" form="removeForm" class="btn btn-primary" data-bs-dismiss="modal">Remove Event</button>
+        </div>
+      </div>
+    </div>
+  </div>  
+  
+  
+  <script>
+    
+    const times = document.querySelectorAll("input[type=time]");
+    // THIS MUST REMAIN "OF"
+    for (const time of times) {
+      time.addEventListener("change", (event) => {
+        // If change to beginning time of card, change end of previous card
+        let targetCard = event.target.closest(".card")
+        if (event.target.className == "beginning") {
+          let prevCard = getPrevCard(targetCard)
+          getEndingTime(prevCard).value = event.target.value
+        }
+        // If change to ending time of card, change beginning of next card
+        else {
+          let nextCard = getNextCard(targetCard)
+          getBeginningTime(nextCard).value = event.target.value
+        }
+
+        // Check if duration of new card is positive
+      });
+    }
+
+    const removeButtons = document.getElementsByClassName("removeButton")
+    for (const button of removeButtons) {
+      button.addEventListener("click", (event) => {
+        const cardToRemove = event.target.closest(".card")
+
+        // Automatically remove Free Time
+        if (cardToRemove.querySelector(".card-title").innerHTML == "Free Time") {
+          cardToRemove.remove()
+        }
+
+        // If there is no previous card, hide the option to alter its time
+        if (!getPrevCard(cardToRemove)) {
+          document.querySelector("#morePrevDiv").style.display = "none"
+        } else {
+          document.querySelector("#morePrevDiv").style.display = "inline-block"
+        }
+
+        // If there is no previous card, hide the option to alter its time
+        if (!getNextCard(cardToRemove)) {
+          document.querySelector("#moreNextDiv").style.display = "none"
+        } else {
+          document.querySelector("#moreNextDiv").style.display = "inline-block"
+        }
+      })
+    }
+
+    // Grab input focus on modal pop up
+    let modalTriggerButton
+    const modal = document.getElementById('removeModal')
+    const input = document.getElementById('fill')
+    modal.addEventListener('shown.bs.modal', () => {
+      input.focus()
+      // Button that triggered the modal
+      modalTriggerButton = event.relatedTarget
+    })
+
+    const form = document.getElementById('removeForm')
+    form.addEventListener(
+      "submit",
+      (event) => {
+        const data = new FormData(form);
+        const cardToRemove = modalTriggerButton.closest(".card")
+        const prevCard = cardToRemove.previousElementSibling
+        const nextCard = cardToRemove.nextElementSibling
+        switch (data.get("remove")) {
+          case "fill":
+            makeCardFreeTime(cardToRemove)
+            break
+          case "morePrev":
+            addDurationToTime(getEndingTime(prevCard), getDurationOfCard(cardToRemove))
+            cardToRemove.remove()
+            break
+          case "moreNext":
+            subtractDurationToTime(getBeginningTime(nextCard), getDurationOfCard(cardToRemove))
+            cardToRemove.remove()
+            break;
+        }
+        event.preventDefault();
+      },
+      false,
+    );
+
+    let startingSortables = []
+    for (let index = 0; index < 3; index++) {
+      const dayList = document.getElementById("day-"+index)
+      let sortableInstance = Sortable.create(dayList, {
+        group: {
+          name: "shared",
+          pull: "clone",
+          revertClone: true, // This is needed so that clone doesn't jump around in the orig list
+        },
+        draggable: ".card",
+        animation: 150,
+        ghostClass: "dragging",
+        store: {
+          // Called onEnd, when any item is dropped
+          // If moving between groups, gives sortable for new list, then old list
+          set: function (sortable) {
+            console.log(sortable.toArray())
+            // Check which of original list has at least 2 matches
+          },
+        },
+        onClone: function(event) {
+          makeCardFreeTime(event.clone)
+        }
+        // onEnd: function(event) { 
+        // }
+      });
+      startingSortables.push(sortableInstance.toArray())
+    }
+
+    function getBeginningTime(cardElement) {
+      return cardElement.querySelector(".beginning")
+    }
+
+    function getEndingTime(cardElement) {
+      return cardElement.querySelector(".ending")
+    }
+
+    function timeInputToDate(timeInput) {
+      return new Date('1970-01-01T' + timeInput.value + ':00Z')
+    }
+
+    function getDurationOfCard(cardElement) {
+      // Suppose you have two time inputs in the format 'HH:MM'
+      let beginningTime = getBeginningTime(cardElement)
+      let endingTime = getEndingTime(cardElement)
+
+      // You can use the Date constructor to create Date objects from these times
+      let beginningDate = timeInputToDate(beginningTime)
+      let endingDate = timeInputToDate(endingTime)
+
+      // Now you can subtract the two dates to get the difference in milliseconds
+      let diff = endingDate - beginningDate
+
+      // Convert the difference from milliseconds to minutes
+      return (diff / 1000 / 60)
+    }
+
+    function addDurationToTime(timeInput, duration) {
+      // Create a Date object for this time
+      let tempDate = timeInputToDate(timeInput)
+
+      // Add the duration to it
+      tempDate.setMinutes(tempDate.getMinutes() + duration);
+
+      // Extract the new time
+      let hours = tempDate.getUTCHours();
+      let minutes = tempDate.getUTCMinutes();
+
+      // Format the new time as a string
+      timeInput.value = ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2)
+    }
+
+    function subtractDurationToTime(timeInput, duration) {
+      addDurationToTime(timeInput, -duration)
+    }
+
+    function makeCardFreeTime(cardElement) {
+      cardElement.dataset.id = "Free Time"
+      cardElement.querySelector(".img-fluid").src = "/images/paris/free.jpg"
+      cardElement.querySelector(".card-title").innerHTML = "Free Time"
+      cardElement.querySelector(".card-text").innerHTML = "Do whatever you want"
+    }
+
+    function getNextCard(cardElement) {
+      const nextCard = cardElement.nextElementSibling
+      if (!nextCard || !nextCard.className.includes("card")) {
+        return null
+      } else {
+        return nextCard
+      }
+    }
+
+    function getPrevCard(cardElement) {
+      const prevCard = cardElement.previousElementSibling
+      if (!prevCard || !prevCard.className.includes("card")) {
+        return null
+      } else {
+        return prevCard
+      }
+    }
+
+    // NOW
+    // Change time when events are dragged:
+      // Don't change times, shift earlier sites by duration, shift later sites by duration
+    // How do we look on mobile?
+
+
+    // TODO
+    // How to handle both generic descriptions of locations and specific directions for the location
+    // Modify start/end time
+    // Account for travel, both between sites and at the beginning/end of day
+    // When moving to Cloudflare pages, upload images directly
+    // Make card height proportional to attraction length, shrinking/growing as needed (floor(time/30min))
+    // Optimize bootstrap bundle: https://getbootstrap.com/docs/5.3/customize/optimize/
+    // Save state to URL hash
+    // Load state from URL hash
+    // Handle dates and times more robustly
+      // Luxon, Day.js, Date and Intl objects
+      // Handle events split across multiple days (e.g. 11pm-1am)
+    // Make remove events more spatially aware
+      // Auto delete 'Free Time'
+      // Detect if beginning or end of list
+
+    </script>
+</body>
+</html>
