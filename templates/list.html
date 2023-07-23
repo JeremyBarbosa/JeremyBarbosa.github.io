@@ -23,9 +23,9 @@
                       <h4 class="card-title col-10">{{ sites[1] }}</h4>
                       <button type="button" data-bs-toggle="modal" data-bs-target="#removeModal" class="removeButton btn-close col-auto" aria-label="Close"></button>
                     </div>
-                    <div class="fs-6 pb-2">
+                    <div class="pb-2">
                       <input class="beginning" type="time" value="{{ sites[0] }}">
-                      /
+                      &mdash;
                       {% if day[loop.index] %}
                       <input class="ending" type="time" value="{{ day[loop.index][0] }}">
                       {% else %}

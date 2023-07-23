@@ -44,6 +44,11 @@
     .error {
       background: #F65A83;
     }
+    @media only screen and (max-width: 640px) {
+      input[type=time] {
+        font-size: 3.5vw;
+      }
+    }
   </style>
 </head>
 <body>
@@ -132,9 +137,9 @@
         // If change to beginning time of card, change end of previous card
         let targetCard = event.target.closest(".card")
         if (event.target.className == "beginning") {
-          let prevCard = getPrevCard(targetCard)
-          getEndingTime(prevCard).value = event.target.value
-          checkDurationOfCard(prevCard)
+          let previousCard = getPreviousCard(targetCard)
+          getEndingTime(previousCard).value = event.target.value
+          checkDurationOfCard(previousCard)
         }
         // If change to ending time of card, change beginning of next card
         else {
@@ -161,7 +166,7 @@
         }
 
         // If there is no previous card, hide the option to alter its time
-        if (!getPrevCard(cardToRemove)) {
+        if (!getPreviousCard(cardToRemove)) {
           document.querySelector("#morePrevDiv").style.display = "none"
         } else {
           document.querySelector("#morePrevDiv").style.display = "inline-block"
@@ -197,14 +202,14 @@
 
         const data = new FormData(removeForm);
         const cardToRemove = removeTriggerButton.closest(".card")
-        const prevCard = getPrevCard(cardToRemove)
+        const previousCard = getPreviousCard(cardToRemove)
         const nextCard = getNextCard(cardToRemove)
         switch (data.get("remove")) {
           case "fill":
             makeCardFreeTime(cardToRemove)
             break
           case "morePrev":
-            addDurationToTime(getEndingTime(prevCard), getDurationOfCard(cardToRemove))
+            addDurationToTime(getEndingTime(previousCard), getDurationOfCard(cardToRemove))
             cardToRemove.remove()
             break
           case "moreNext":
@@ -226,14 +231,21 @@
 
         const data = new FormData(pushForm);
         let durationOfDraggedCard = getDurationOfCard(draggedCard)
+
+        // If the user chooses to push down the times,
+        // iterate through all previous cards and decrease
+        // their time by the duration of the dragged card
         if (data.get("push") == "pushDown") {
-          let previousCard = getPrevCard(draggedCard)
+          let previousCard = getPreviousCard(draggedCard)
           while (previousCard) {
             subtractDurationToTime(getBeginningTime(previousCard), durationOfDraggedCard)
             subtractDurationToTime(getEndingTime(previousCard), durationOfDraggedCard)
-            previousCard = getPrevCard(previousCard)
+            previousCard = getPreviousCard(previousCard)
           }
         }
+        // If the user chooses to push up the times,
+        // iterate through all next cards and increase
+        // their time by the duration of the dragged card
         else {
           let nextCard = getNextCard(draggedCard)
           while (nextCard) {
@@ -243,7 +255,10 @@
           }
         }
         
-        let previousCard = getPrevCard(draggedCard)
+        // The dragged card needs a new beginning and ending time
+        // Ideally this is the ending time of the previous card
+        // and the beginning time of the next card
+        let previousCard = getPreviousCard(draggedCard)
         let nextCard = getNextCard(draggedCard)
         if (previousCard) {
           getBeginningTime(draggedCard).value = getEndingTime(previousCard).value 
@@ -292,7 +307,7 @@
           draggedCard = event.item
 
           // If there is no previous card, hide the option to alter its time
-          if (!getPrevCard(draggedCard)) {
+          if (!getPreviousCard(draggedCard)) {
             document.querySelector("#pushDownDiv").style.display = "none"
           } else {
             document.querySelector("#pushDownDiv").style.display = "inline-block"
@@ -375,12 +390,12 @@
       }
     }
 
-    function getPrevCard(cardElement) {
-      const prevCard = cardElement.previousElementSibling
-      if (!prevCard || !prevCard.className.includes("card")) {
+    function getPreviousCard(cardElement) {
+      const previousCard = cardElement.previousElementSibling
+      if (!previousCard || !previousCard.className.includes("card")) {
         return null
       } else {
-        return prevCard
+        return previousCard
       }
     }
 
